@@ -31,7 +31,7 @@ DATA_FILE = "belt_requests.json"
 INTENTS = discord.Intents.default()
 INTENTS.members = True
 
-TOKEN = getenv("BELTBOT_TEST_TOKEN")
+TOKEN = getenv("BELTBOT_TOKEN")
 
 BOT = commands.Bot(command_prefix=".", intents=INTENTS)
 
@@ -197,6 +197,7 @@ def format_requests(requests):
                 f"\nUser: `@{request['author']}`"
                 f"\nBelt: {request['colour']}"
                 f"\nMessage: {request['body']}"
+                f"\nURL: {request['jump_url']}"
             )
         )
     return "\n\n==========\n\n".join(formatted_requests)
@@ -208,7 +209,7 @@ async def beltrequest_handler(ctx, colour, spacer, *args):
     if colour not in VALID_BELTS:
         await ctx.send(
             (
-                f"I don't think {colour} is a real belt :( \n"
+                f"{ctx.message.author.mention} I don't think {colour} is a real belt :( \n"
                 f"Try one of these: {HUMAN_READABLE_BELTS}"
             ),
             mention_author=True,
@@ -216,7 +217,7 @@ async def beltrequest_handler(ctx, colour, spacer, *args):
         return
 
     await ctx.send(
-        f"Thanks for your {VALID_BELTS[colour]} request!", mention_author=True
+        f"{ctx.message.author.mention} thanks for your {VALID_BELTS[colour]} request!", mention_author=True
     )
 
     body = " ".join(args)
@@ -260,7 +261,7 @@ async def list_handler(ctx, sort="oldest"):
 @suppress_exceptions
 @BOT.command(name="beltapprove")
 @requires_role("Mods")
-async def approval_handler(ctx, request_id, reason=None):
+async def approval_handler(ctx, request_id, *reason):
     request = get_request(request_id)
 
     if request is None:
@@ -285,7 +286,7 @@ async def approval_handler(ctx, request_id, reason=None):
             f"{member.mention}, {ctx.author.mention} has reviewed and approved your request. "
             f"Congrats on your {role.name}!"
         )
-        + (f"\nNotes: {reason}" if reason else "")
+        + (f"\nNotes: {' '.join(reason_part for reason_part in reason)}" if reason else "")
     )
 
     remove_request(request_id)
@@ -294,11 +295,15 @@ async def approval_handler(ctx, request_id, reason=None):
 @suppress_exceptions
 @BOT.command(name="beltreject")
 @requires_role("Mods")
-async def rejection_handler(ctx, request_id, reason):
+async def rejection_handler(ctx, request_id, *reason):
     request = get_request(request_id)
 
     if request is None:
         await ctx.send(f"No request by id {request_id}")
+        return
+
+    if not reason:
+        await ctx.send("You need to provide a reason!")
         return
 
     member = await ctx.message.guild.fetch_member(request["author_id"])
@@ -315,9 +320,9 @@ async def rejection_handler(ctx, request_id, reason):
 
     await ctx.send(
         (
-            f"{member.mention}, {ctx.author.mention} has reviewed and deniel your request "
+            f"{member.mention}, {ctx.author.mention} has reviewed and denied your request "
             f"for {role.name}."
-            f"\nNotes: {reason}"
+            f"\nNotes: {' '.join(reason_part for reason_part in reason)}"
         )
     )
 
@@ -327,12 +332,16 @@ async def rejection_handler(ctx, request_id, reason):
 @suppress_exceptions
 @BOT.command(name="beltmoreinfo")
 @requires_role("Mods")
-async def moreinfo_handler(ctx, request_id, reason):
+async def moreinfo_handler(ctx, request_id, *reason):
     guild = ctx.message.guild
     request = get_request(request_id)
 
     if request is None:
         await ctx.send(f"No request by id {request_id}")
+        return
+
+    if not reason:
+        await ctx.send("You need to provide more information!")
         return
 
     member = await guild.fetch_member(request["author_id"])
@@ -352,7 +361,7 @@ async def moreinfo_handler(ctx, request_id, reason):
             f"{member.mention}, {ctx.author.mention} has reviewed your request for"
             f" {role.name} but needs more information. Please update your"
             f" request here: {request['jump_url']}"
-            f"\nNotes: {reason}"
+            f"\nNotes: {' '.join(reason_part for reason_part in reason)}"
         )
     )
 
