@@ -3,19 +3,17 @@
 ## Requirements
 
 Requires python > `3.8`
+
 `pip install discord`
 
 Bot setup:
 
 Requires priviledged intent `members`.
 
-Requires; [
-    "Manage Roles",
-    "Send Messages",
-    "Read Message History"
-]
+Requires auth attributes; `Manage Roles`, `Send Messages`, `Read Message History`.
 
 Requires env var `BELTBOT_TOKEN`.
+
 Requires access to a json file. You can configure this however you please in the `DATA_FILE` constant.
 
 
@@ -23,7 +21,8 @@ Requires access to a json file. You can configure this however you please in the
 
 #### Making a belt request
 `.beltrequest <colour> <anychar> <request text>`
-Example: `.beltrequest white - Hi I picked a 410 with a toothbrush
+
+Example: `.beltrequest white - Hi I picked a 410 with a toothbrush`
 
 Example output:
 ```
@@ -34,11 +33,11 @@ Example output:
 
 `.beltlist [order]`
 
-For order, you can pass `oldest` or `newest`.
+Order is optional. For order, you can pass `oldest` or `newest`. Defaults to oldest first.
 
 Example output:
 ```
-Active requests, sorted by oldest:
+Active requests, sorted by newest:
 
 Created: 2021-02-14 23:04:12
 ID: 9f542352g718
@@ -62,6 +61,8 @@ URL: https://discord.com/channels/345y7289523/6226464564456/g345h789gbniuerlgb4
 As you can see, requests have IDs. You can use this ID to interact with it.
 
 `.beltapprove <request_id> [note text]`
+
+`note text` is optional on approval.
 
 Example:
 `.beltapprove 9f542352g718 Nice pick!`
