@@ -18,6 +18,7 @@ from functools import wraps, partial
 from datetime import datetime, timedelta
 from contextlib import contextmanager
 from copy import deepcopy
+from dataclasses import dataclass
 
 import discord
 from discord.ext import commands
@@ -35,7 +36,6 @@ TOKEN = getenv("BELTBOT_TOKEN")
 
 BOT = commands.Bot(command_prefix=".", intents=INTENTS)
 
-
 VALID_BELTS = {
     "white": "White Belt",
     "yellow": "Yellow Belt",
@@ -50,10 +50,24 @@ VALID_BELTS = {
     "3rd": "3rd Dan",
     "4th": "4th Dan",
     "5th": "5th Dan",
-    "HoF": "????",
+    "6th": "6th Dan",
+    "7th": "7th Dan",
+    "8th": "8th Dan",
+    "9th": "9th Dan",
+    "10th": "10th Dan",
+    "HoF": "Hall of Fame",
 }
 HUMAN_READABLE_BELTS = ", ".join([belt for belt in VALID_BELTS])
 
+# ========== Special requests ==========
+
+@dataclass
+class HoF:
+    name = VALID_BELTS["HoF"]
+
+SPECIAL_REQUESTS = {
+    "HoF": HoF + " request"
+}
 
 # ========== UTILITY FUNCTIONS ==========
 
@@ -79,7 +93,7 @@ def suppress_exceptions(awaitable=True):
     return confused_middleman
 
 
-def check_approver_authz(ctx, role_name):
+def check_authz(ctx, role_name):
     matching_role = get_role_by_name(ctx, role_name)
     approver_roles = ctx.author.roles
 
@@ -93,7 +107,7 @@ def requires_role(role_name):
     def bleep_bloop(coro):
         @wraps(coro)
         async def inner(ctx, *args, **kwargs):
-            if check_approver_authz(ctx, role_name):
+            if check_authz(ctx, role_name):
                 return await coro(ctx, *args, **kwargs)
             else:
                 await ctx.send(
@@ -148,6 +162,18 @@ def log_request(request):
     logging.info(f"Logged belt request {request}")
 
 
+def update_request(request):
+    with open(DATA_FILE) as jf:
+        j = json.load(jf)
+
+    index, _ = next((i, __) for i, __ in enumerate(j["belt_requests"]))
+    j["belt_requests"][index] = request
+
+    write_json(j)
+
+    logging.info(f"Updated belt request {request}")
+
+
 def load_requests(sort="oldest"):
     with open(DATA_FILE) as jf:
         j = json.load(jf)
@@ -160,6 +186,12 @@ def load_requests(sort="oldest"):
         requests = list(reversed(requests))
 
     return requests
+
+
+def load_raw_json():
+    with open(DATA_FILE) as jf:
+        j = json.load(jf)
+        return j
 
 
 def get_request(request_id):
@@ -198,7 +230,7 @@ def format_requests(requests):
                 f"\nBelt: {request['colour']}"
                 f"\nMessage: {request['body']}"
                 f"\nURL: {request['jump_url']}"
-            )
+            ) + (f"\nUnder review by: {request['reviewer']}" if request.get('reviewer') else "")
         )
     return "\n\n==========\n\n".join(formatted_requests)
 
@@ -278,8 +310,11 @@ async def approval_handler(ctx, request_id, *reason):
         return
 
     role_name = VALID_BELTS[request["colour"]]
-    role = get_role_by_name(ctx, role_name)
-    await member.add_roles(role)
+    try:
+        role = get_role_by_name(ctx, role_name)
+        await member.add_roles(role)
+    except AttributeError:
+        role = SPECIAL_REQUESTS[request["colour"]]
 
     await ctx.send(
         (
@@ -364,6 +399,78 @@ async def moreinfo_handler(ctx, request_id, *reason):
             f"\nNotes: {' '.join(reason_part for reason_part in reason)}"
         )
     )
+
+
+@suppress_exceptions
+@BOT.command(name="beltreview")
+@requires_role("Mods")
+async def beltreview_handler(ctx, request_id):
+    guild = ctx.message.guild
+    request = get_request(request_id)
+
+    if request is None:
+        await ctx.send(f"No request by id {request_id}")
+        return
+
+    member = await guild.fetch_member(request["author_id"])
+    role_name = VALID_BELTS[request["colour"]]
+    role = get_role_by_name(ctx, role_name)
+
+    request["reviewer"] = ctx.author.display_name
+
+    await ctx.send(
+        (
+            f"{ctx.author.mention} is reviewing `{member.display_name}`'s request for"
+            f" {role.name}"
+        )
+    )
+
+    update_request(request)
+
+
+@suppress_exceptions
+@BOT.command(name="beltunreview")
+@requires_role("Mods")
+async def beltunreview_handler(ctx, request_id):
+    guild = ctx.message.guild
+    request = get_request(request_id)
+
+    if request is None:
+        await ctx.send(f"No request by id {request_id}")
+        return
+
+    member = await guild.fetch_member(request["author_id"])
+    role_name = VALID_BELTS[request["colour"]]
+    role = get_role_by_name(ctx, role_name)
+
+    del request["reviewer"]
+
+    await ctx.send(
+        (
+            f"{ctx.author.mention} *stopped* the review on `{member.display_name}`'s request for"
+            f" {role.name}"
+        )
+    )
+
+    update_request(request)
+
+
+@suppress_exceptions
+@BOT.command(name="getrawjson")
+@requires_role("BeltBotMaintainer")
+async def getrawjson_handler(ctx):
+    j = load_raw_json()
+    await ctx.send(f"Hey boss, here ya go:\n```{json.dumps(j)}```")
+
+
+@suppress_exceptions
+@BOT.command(name="insertrawjson", rest_is_raw=True)
+@requires_role("BeltBotMaintainer")
+async def insertrawjson_handler(ctx, *, j):
+    print(j)
+    j = json.loads(j)
+    write_json(j)
+    ctx.send("I have updated the internal json. `.getrawjson` to see.")
 
 
 def ensure_file_and_format():
