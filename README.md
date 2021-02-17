@@ -19,12 +19,14 @@ Requires access to a json file. You can configure this however you please in the
 
 ## Command reference:
 
+To invoke any command, mention the bot :)
+
 ### Unprotected commands
 
 #### Making a belt request
-`.beltrequest <colour> <anychar> <request text>`
+`@LPUBeltbot beltrequest <colour> <anychar> <request text>`
 
-Example: `.beltrequest white - Hi I picked a 410 with a toothbrush`
+Example: `@LPUBeltbot beltrequest white - Hi I picked a 410 with a toothbrush. My reddit username is /u/theelous3`
 
 Example output:
 ```
@@ -33,7 +35,7 @@ Example output:
 
 #### Listing active requests
 
-`.beltlist [order]`
+`@LPUBeltbot beltlist [order]`
 
 Order is optional. For order, you can pass `oldest` or `newest`. Defaults to oldest first.
 
@@ -64,27 +66,29 @@ URL: https://discord.com/channels/345y7289523/6226464564456/g345h789gbniuerlgb4
 
 As you can see, requests have IDs. You can use this ID to interact with it.
 
-`.beltapprove <request_id> [note text]`
+This command will ping the applicant and assign them the requested role. If they gave a reddit username, it will assign flair there too.
+
+`@LPUBeltbot beltapprove <request_id> [note text]`
 
 `note text` is optional on approval.
 
 Example:
-`.beltapprove 9f542352g718 Nice pick!`
+`@LPUBeltbot beltapprove 9f542352g718 Nice pick!`
 
-This will ping the applicant and assign them the requested role, like so:
 
 ```
 @theelous3, @moderatorGuy has reviewed and approved your request. Congrats on your White Belt!
 Notes: Nice pick!
+You have also been flaired on reddit :)
 ```
 
 #### Rejecting a request
 
-`.beltreject <request_id> <reason text>`
+`@LPUBeltbot beltreject <request_id> <reason text>`
 
 You must provide a reason when denying a request.
 
-Example: `.beltreject af545352g712 That isn't a lock, it's a beer can`
+Example: `@LPUBeltbot beltreject af545352g712 That isn't a lock, it's a beer can`
 
 This will ping the applicant and reject the application, like so:
 
@@ -96,11 +100,11 @@ Notes: That isn't a lock, it's a beer can
 
 #### Requesting more info
 
-`.beltmoreinfo <request_id> <reason text>`
+`@LPUBeltbot beltmoreinfo <request_id> <reason text>`
 
 You must provide a reason when requesing more info.
 
-Example: `.beltmoreinfo af545352g712 you need to gut the lock in the same take, sorry`
+Example: `@LPUBeltbot beltmoreinfo af545352g712 you need to gut the lock in the same take, sorry`
 
 ```
 @theelous3, @moderatorGuy has reviewed your request for White Belt but needs more information. Please update your request here: https://discord.com/channels/345y7289523/6226464564456/g345h789gbniuerlgb4
@@ -110,9 +114,9 @@ Notes: you need to gut the lock in the same take, sorry
 
 #### Setting a request as under review
 
-`.beltreview <request_id>`
+`@LPUBeltbot beltreview <request_id>`
 
-Example: `.beltreview af545352g712`
+Example: `@LPUBeltbot beltreview af545352g712`
 
 This will set you as the reviewer on the request's info.
 
@@ -122,9 +126,9 @@ This will set you as the reviewer on the request's info.
 
 #### Setting a request as out of review
 
-`.beltreview <request_id>`
+`@LPUBeltbot beltreview <request_id>`
 
-Example: `.beltreview af545352g712`
+Example: `@LPUBeltbot beltreview af545352g712`
 
 This will remove _any_ reviewer from the request's info.
 
