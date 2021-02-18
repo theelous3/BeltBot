@@ -594,10 +594,10 @@ async def insertrawjson_handler(ctx, *, j):
 @BOT.event
 async def on_command_error(ctx, error):
     if isinstance(error, CommandNotFound):
-        await ctx.send("No such command. Try `.help` to see my commands :D")
+        await ctx.send("No such command. Try `@LPUBeltbot help` to see my commands :D")
     elif isinstance(error, UserInputError):
         command = ctx.invoked_with
-        await ctx.send(f"I don't understand. Try `.help {command}` to learn more :D")
+        await ctx.send(f"I don't understand. Try `@LPUBeltbot {command}` to learn more :D")
     else:
         ctx.send("You've confused the bot :(")
 
