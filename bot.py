@@ -344,12 +344,12 @@ def format_requests(requests):
     return "\n\n==========\n\n".join(formatted_requests)
 
 
-_beltrequest_help = "Include your username in the format `/u/username_here` anywhere in the message body to be flaired on reddit!"
+_request_help = "Include your username in the format `/u/username_here` anywhere in the message body to be flaired on reddit!"
 
 
 @suppress_exceptions
-@BOT.command(name="beltrequest", help=_beltrequest_help)
-async def beltrequest_handler(ctx, colour, spacer, *body):
+@BOT.command(name="request", help=_request_help)
+async def request_handler(ctx, colour, spacer, *body):
     if colour not in VALID_BELTS:
         await ctx.send(
             (
@@ -381,7 +381,7 @@ async def beltrequest_handler(ctx, colour, spacer, *body):
 
 
 @suppress_exceptions
-@BOT.command(name="beltlist")
+@BOT.command(name="list")
 async def list_handler(ctx, sort="oldest"):
     if sort not in ["oldest", "newest"]:
         await ctx.send(
@@ -405,7 +405,7 @@ async def list_handler(ctx, sort="oldest"):
 
 
 @suppress_exceptions
-@BOT.command(name="beltapprove")
+@BOT.command(name="approve")
 @requires_role("Mods")
 async def approval_handler(ctx, request_id, *reason):
     request = get_request(request_id)
@@ -448,7 +448,7 @@ async def approval_handler(ctx, request_id, *reason):
 
 
 @suppress_exceptions
-@BOT.command(name="beltreject")
+@BOT.command(name="reject")
 @requires_role("Mods")
 async def rejection_handler(ctx, request_id, *reason):
     request = get_request(request_id)
@@ -485,7 +485,7 @@ async def rejection_handler(ctx, request_id, *reason):
 
 
 @suppress_exceptions
-@BOT.command(name="beltmoreinfo")
+@BOT.command(name="moreinfo")
 @requires_role("Mods")
 async def moreinfo_handler(ctx, request_id, *reason):
     guild = ctx.message.guild
@@ -522,9 +522,9 @@ async def moreinfo_handler(ctx, request_id, *reason):
 
 
 @suppress_exceptions
-@BOT.command(name="beltreview")
+@BOT.command(name="review")
 @requires_role("Mods")
-async def beltreview_handler(ctx, request_id):
+async def review_handler(ctx, request_id):
     guild = ctx.message.guild
     request = get_request(request_id)
 
@@ -549,9 +549,9 @@ async def beltreview_handler(ctx, request_id):
 
 
 @suppress_exceptions
-@BOT.command(name="beltunreview")
+@BOT.command(name="unreview")
 @requires_role("Mods")
-async def beltunreview_handler(ctx, request_id):
+async def unreview_handler(ctx, request_id):
     guild = ctx.message.guild
     request = get_request(request_id)
 
