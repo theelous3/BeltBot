@@ -366,6 +366,7 @@ async def beltrequest_handler(ctx, colour, spacer, *body):
     )
 
     body = " ".join(body) or ""
+    body = body.replace("@", "")
     request = {
         "request_id": str(uuid4())[-12:],
         "author": ctx.author.display_name,
