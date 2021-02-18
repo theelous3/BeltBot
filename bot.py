@@ -109,7 +109,7 @@ VALID_BELTS = {
     "8th": {"name": "8th Dan", "flair_text": None, "css_class": None},
     "9th": {"name": "9th Dan", "flair_text": None, "css_class": None},
     "10th": {"name": "10th Dan", "flair_text": None, "css_class": None},
-    "HoF": {"name": "Hall of Fame", "flair_text": None, "css_class": None},
+    "HoF": {"name": "Hall of Fame entry", "flair_text": None, "css_class": None},
 }
 
 HUMAN_READABLE_BELTS = ", ".join([belt for belt in VALID_BELTS])
@@ -122,7 +122,7 @@ class HoF:
     name = VALID_BELTS["HoF"]["name"]
 
 
-SPECIAL_REQUESTS = {"HoF": HoF.name + " entry"}
+SPECIAL_REQUESTS = {"HoF": HoF}
 
 
 # ========== REDDIT JUNK ==========
@@ -424,12 +424,13 @@ async def approval_handler(ctx, request_id, *reason):
         return
 
     role_name = VALID_BELTS[request["colour"]]["name"]
+    logging.info(f"ROLE {role_name}")
     try:
         role = get_role_by_name(ctx, role_name)
         await member.add_roles(role)
     except AttributeError:
         role = SPECIAL_REQUESTS[request["colour"]]
-
+    logging.info(f"ROLE {role}")
     flair_text = await reddit_flair_user(request["body"], request["colour"])
 
     message = (
@@ -594,13 +595,12 @@ async def insertrawjson_handler(ctx, *, j):
 
 @BOT.event
 async def on_command_error(ctx, error):
+    logging.error(error)
     if isinstance(error, CommandNotFound):
         await ctx.send("No such command. Try `@LPUBeltbot help` to see my commands :D")
     elif isinstance(error, UserInputError):
         command = ctx.invoked_with
         await ctx.send(f"I don't understand. Try `@LPUBeltbot {command}` to learn more :D")
-    else:
-        ctx.send("You've confused the bot :(")
 
 
 def ensure_file_and_format():
