@@ -77,17 +77,12 @@ VALID_BELTS = {
     "8th": {"name": "8th Dan", "flair_text": None, "css_class": None},
     "9th": {"name": "9th Dan", "flair_text": None, "css_class": None},
     "10th": {"name": "10th Dan", "flair_text": None, "css_class": None},
-    "HoF": {"name": "Hall of Fame entry", "flair_text": None, "css_class": None},
 }
 
+NON_BELTS = {
+    "HoF": {"name": "Hall of Fame", "flair_text": None, "css_class": None},
+}
+
+BET_ROLE_NAMES = [v["name"] for v in VALID_BELTS.values()]
+
 HUMAN_READABLE_BELTS = ", ".join([belt for belt in VALID_BELTS])
-
-# ========== Special requests ==========
-
-
-@dataclass
-class HoF:
-    name = VALID_BELTS["HoF"]["name"]
-
-
-SPECIAL_REQUESTS = {"HoF": HoF}

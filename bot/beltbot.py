@@ -17,7 +17,7 @@ __all__ = [
     "moreinfo_handler",
     "review_handler",
     "unreview_handler",
-    "delete_all_handler"
+    # "delete_all_handler"
 ]
 
 
@@ -27,6 +27,8 @@ import traceback
 from uuid import uuid4
 from re import compile
 from copy import deepcopy
+from itertools import chain
+from collections import ChainMap
 from functools import wraps, partial
 from contextlib import contextmanager
 from datetime import datetime, timedelta
@@ -36,8 +38,8 @@ from discord.utils import get as discord_find
 from discord.ext.commands.errors import UserInputError, CommandNotFound
 
 from bot.bot import BOT
-from bot.utils import suppress_exceptions, get_now, format_requests
-from bot.discord_utils import requires_role, get_role_by_name
+from bot.utils import get_now, format_requests
+from bot.discord_utils import requires_role, get_role_by_name, give_user_role
 from bot.reddit import reddit_flair_user
 
 from bot.db import (
@@ -51,7 +53,7 @@ from bot.db import (
 
 from bot.constants import(
     VALID_BELTS,
-    SPECIAL_REQUESTS,
+    NON_BELTS,
     HUMAN_READABLE_BELTS
 )
 
@@ -61,7 +63,7 @@ _request_help = "Include your username in the format `/u/username_here` anywhere
 
 @BOT.command(name="request", help=_request_help)
 async def request_handler(ctx, colour, spacer, *body):
-    if colour not in VALID_BELTS:
+    if colour not in chain(VALID_BELTS, NON_BELTS):
         await ctx.send(
             (
                 f"{ctx.message.author.mention} I don't think {colour} is a real belt :( \n"
@@ -71,8 +73,10 @@ async def request_handler(ctx, colour, spacer, *body):
         )
         return
 
+    role_name = ChainMap(VALID_BELTS, NON_BELTS)[colour]['name']
+
     await ctx.send(
-        f"{ctx.message.author.mention} thanks for your {VALID_BELTS[colour]['name']} request!",
+        f"{ctx.message.author.mention} thanks for your {role_name} request!",
         mention_author=True,
     )
 
@@ -132,13 +136,7 @@ async def approval_handler(ctx, request_id, *reason):
         await delete_request(request_id)
         return
 
-    role_name = VALID_BELTS[request["colour"]]["name"]
-
-    try:
-        role = get_role_by_name(ctx, role_name)
-        await member.add_roles(role)
-    except AttributeError:
-        role = SPECIAL_REQUESTS[request["colour"]]
+    role = await give_user_role(ctx, member, request["colour"])
 
     flair_text = await reddit_flair_user(request["body"], request["colour"])
 
@@ -276,11 +274,11 @@ async def unreview_handler(ctx, request_id):
     await update_request(request_id, {"reviewer": ""}, remove=True)
 
 
-@suppress_exceptions
-@BOT.command(name="delete_all", rest_is_raw=True)
-@requires_role("BeltBotMaintainer")
-async def delete_all_handler(ctx):
-    await delete_all_requests()
+# @BOT.command(name="delete_all", rest_is_raw=True)
+# @requires_role("BeltBotMaintainer")
+# async def delete_all_handler(ctx):
+#     await delete_all_requests()
+#     logging.info(ctx.author.roles)
 
 
 @BOT.event
