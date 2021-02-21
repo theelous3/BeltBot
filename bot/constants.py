@@ -1,6 +1,11 @@
 from os import getenv
 from dataclasses import dataclass
 
+from dotenv import load_dotenv
+
+
+load_dotenv()
+
 
 MY_NAME = "LPUBeltbot"
 
@@ -10,9 +15,7 @@ MY_REDDIT_CLIENT_ID = getenv("BELTBOT_REDDIT_CID")
 
 MY_REDDIT_SECRET = getenv("BELTBOT_REDDIT_KEY")
 
-USER_AGENT = "LPUBeltbot_v0.1"
-
-DATA_FILE = "../bin/belt_requests.json"
+USER_AGENT = "LPUBeltbot_v0.1.1"
 
 TOKEN = getenv("BELTBOT_TOKEN")
 

@@ -52,8 +52,7 @@ from bot.db import (
 from bot.constants import(
     VALID_BELTS,
     SPECIAL_REQUESTS,
-    HUMAN_READABLE_BELTS,
-    DATA_FILE
+    HUMAN_READABLE_BELTS
 )
 
 
