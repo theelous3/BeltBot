@@ -51,3 +51,10 @@ def format_requests(requests):
             )
         )
     return "\n\n==========\n\n".join(formatted_requests)
+
+
+def when_mentioned(bot, msg):
+    """A hacky rewrite of the commands.when_mentioned prefix callable, because the original one
+    is trash.
+    """
+    return [bot.user.mention + "  ", bot.user.mention + " ", f"<@!{bot.user.id}>  ", f"<@!{bot.user.id}> ", f"<@!{bot.user.id}>"]

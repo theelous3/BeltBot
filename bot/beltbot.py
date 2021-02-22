@@ -33,8 +33,6 @@ from functools import wraps, partial
 from contextlib import contextmanager
 from datetime import datetime, timedelta
 
-
-from discord.utils import get as discord_find
 from discord.ext.commands.errors import UserInputError, CommandNotFound
 
 from bot.bot import BOT
