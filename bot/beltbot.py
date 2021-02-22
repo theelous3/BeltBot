@@ -56,7 +56,7 @@ _request_help = "Include your username in the format `/u/username_here` anywhere
 
 
 @BOT.command(name="request", help=_request_help)
-async def request_handler(ctx, colour, spacer, *body):
+async def request_handler(ctx, colour, *body):
     if colour not in chain(VALID_BELTS, NON_BELTS):
         await ctx.send(
             (
