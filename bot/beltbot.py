@@ -46,14 +46,10 @@ from bot.db import (
     get_request,
     update_request,
     delete_request,
-    delete_all_requests
+    delete_all_requests,
 )
 
-from bot.constants import(
-    VALID_BELTS,
-    NON_BELTS,
-    HUMAN_READABLE_BELTS
-)
+from bot.constants import VALID_BELTS, NON_BELTS, HUMAN_READABLE_BELTS
 
 
 _request_help = "Include your username in the format `/u/username_here` anywhere in the message body to be flaired on reddit!"
@@ -71,7 +67,7 @@ async def request_handler(ctx, colour, spacer, *body):
         )
         return
 
-    role_name = ChainMap(VALID_BELTS, NON_BELTS)[colour]['name']
+    role_name = ChainMap(VALID_BELTS, NON_BELTS)[colour]["name"]
 
     await ctx.send(
         f"{ctx.message.author.mention} thanks for your {role_name} request!",
@@ -288,7 +284,9 @@ async def on_command_error(ctx, error):
         await ctx.send("No such command. Try `@LPUBeltbot help` to see my commands :D")
     elif isinstance(error, UserInputError):
         command = ctx.invoked_with
-        await ctx.send(f"I don't understand. Try `@LPUBeltbot {command}` to learn more :D")
+        await ctx.send(
+            f"I don't understand. Try `@LPUBeltbot {command}` to learn more :D"
+        )
 
 
 @BOT.event

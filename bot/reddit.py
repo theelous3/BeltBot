@@ -1,4 +1,3 @@
-
 from re import compile
 
 import asyncpraw
@@ -11,7 +10,7 @@ from bot.constants import (
     MY_REDDIT_SECRET,
     MY_NAME,
     MY_REDDIT_PW,
-    USER_AGENT
+    USER_AGENT,
 )
 
 
@@ -44,7 +43,7 @@ async def set_reddit_flair(username, belt):
     return True
 
 
-async def reddit_flair_user( text, belt):
+async def reddit_flair_user(text, belt):
     if username := find_username(text):
         try:
             maybe_flaired = await set_reddit_flair(username, belt)

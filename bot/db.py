@@ -10,9 +10,7 @@ beltbot_db = CLIENT.beltbot_db
 REQUESTS = beltbot_db.REQUESTS
 
 
-COLLECTIONS = {
-    "REQUESTS": REQUESTS
-}
+COLLECTIONS = {"REQUESTS": REQUESTS}
 
 
 # generic
@@ -25,9 +23,11 @@ async def _insert(collection, document):
 async def _find(collection, field, value):
     return await collection.find_one({field: value})
 
+
 async def _find_all(collection):
     cursor = collection.find({})
     return [document for document in await cursor.to_list(length=100)]
+
 
 async def _delete(collection, field, value):
     await collection.delete_many({field: value})
@@ -39,10 +39,7 @@ async def _delete_all(collection):
 
 async def _update(collection, field, value, replacement, remove=False):
     await collection.update_one(
-        {field: value},
-        {
-            "$set" if not remove else "$unset": replacement
-        }
+        {field: value}, {"$set" if not remove else "$unset": replacement}
     )
 
 

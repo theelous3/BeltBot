@@ -21,7 +21,6 @@ async def give_user_role(ctx, member, colour):
 
     role = get_role_by_name(ctx, role_name)
 
-
     if assignable:
         await member.add_roles(role)
 
@@ -30,6 +29,7 @@ async def give_user_role(ctx, member, colour):
         await member.remove_roles(*roles_to_remove)
 
     return role
+
 
 def check_authz(ctx, role_name):
     matching_role = get_role_by_name(ctx, role_name)

@@ -8,6 +8,7 @@ def suppress_exceptions(awaitable=True):
     Normally horrible, but bots should be borderline invincible
     to maintain as much functionality as possible in adverse circumstances.
     """
+
     async def confused_middleman(callable):
         @wraps(callable)
         async def inner(*args, **kwargs):
@@ -57,4 +58,10 @@ def when_mentioned(bot, msg):
     """A hacky rewrite of the commands.when_mentioned prefix callable, because the original one
     is trash.
     """
-    return [bot.user.mention + "  ", bot.user.mention + " ", f"<@!{bot.user.id}>  ", f"<@!{bot.user.id}> ", f"<@!{bot.user.id}>"]
+    return [
+        bot.user.mention + "  ",
+        bot.user.mention + " ",
+        f"<@!{bot.user.id}>  ",
+        f"<@!{bot.user.id}> ",
+        f"<@!{bot.user.id}>",
+    ]
