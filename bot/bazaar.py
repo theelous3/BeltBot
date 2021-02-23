@@ -3,7 +3,7 @@ from bot.bot import BOT
 
 async def bazaar_on_message(message):
 
-    if message.channel.name == "lol-memes":
+    if message.channel.name == "lock-bazaar":
         delete = False
         delete_self = False
 

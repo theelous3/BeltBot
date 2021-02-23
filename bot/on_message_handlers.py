@@ -8,7 +8,7 @@ from bot.bazaar import bazaar_on_message
 
 
 _HANDLERS = [
-    # bazaar_on_message
+    bazaar_on_message
 ]
 
 
