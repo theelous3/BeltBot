@@ -11,7 +11,8 @@ async def bazaar_on_message(message):
 
         if message.author != BOT.user:
             if not any(
-                content.startswith(bazaar_prefix) for bazaar_prefix in ["wtb", "wts"]
+                content.startswith(bazaar_prefix)
+                for bazaar_prefix in ["wtb", "wts", "http://", "https://"]
             ):
                 delete = True
         else:

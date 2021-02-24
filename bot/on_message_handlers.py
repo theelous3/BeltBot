@@ -7,9 +7,7 @@ from bot.bot import BOT
 from bot.bazaar import bazaar_on_message
 
 
-_HANDLERS = [
-    bazaar_on_message
-]
+_HANDLERS = [bazaar_on_message]
 
 
 @BOT.event
