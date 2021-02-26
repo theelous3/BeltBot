@@ -37,7 +37,7 @@ from discord.ext.commands.errors import UserInputError, CommandNotFound
 
 from bot.bot import BOT
 from bot.utils import get_now, format_requests
-from bot.discord_utils import requires_role, get_role_by_name, give_user_role
+from bot.discord_utils import requires_role, get_role_by_name, give_user_role, get_channel_by_name
 from bot.reddit import reddit_flair_user
 
 from bot.db import (
@@ -57,6 +57,10 @@ _request_help = "Include your username in the format `/u/username_here` anywhere
 
 @BOT.command(name="request", help=_request_help)
 async def request_handler(ctx, colour, *body):
+    if ctx.message.channel.name != "belt-requests":
+        await ctx.send("Only available in #belt-requests.")
+        return
+
     if colour not in chain(VALID_BELTS, NON_BELTS):
         await ctx.send(
             (
@@ -144,7 +148,9 @@ async def approval_handler(ctx, request_id, *reason):
     if flair_text:
         message += flair_text
 
-    await ctx.send(message)
+    belt_requests_channel = get_channel_by_name(ctx, "belt-requests")
+
+    await belt_requests_channel.send(message)
 
     await delete_request(request_id)
 
@@ -174,7 +180,9 @@ async def rejection_handler(ctx, request_id, *reason):
     role_name = VALID_BELTS[request["colour"]]["name"]
     role = get_role_by_name(ctx, role_name)
 
-    await ctx.send(
+    belt_requests_channel = get_channel_by_name(ctx, "belt-requests")
+
+    await belt_requests_channel.send(
         (
             f"{member.mention}, {ctx.author.mention} has reviewed and denied your request "
             f"for {role.name}."
@@ -211,7 +219,9 @@ async def moreinfo_handler(ctx, request_id, *reason):
     role_name = VALID_BELTS[request["colour"]]["name"]
     role = get_role_by_name(ctx, role_name)
 
-    await ctx.send(
+    belt_requests_channel = get_channel_by_name(ctx, "belt-requests")
+
+    await belt_requests_channel.send(
         (
             f"{member.mention}, {ctx.author.mention} has reviewed your request for"
             f" {role.name} but needs more information. Please update your"

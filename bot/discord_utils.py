@@ -7,6 +7,11 @@ def get_role_by_name(ctx, role_name):
     return next((role for role in roles if role.name == role_name), None)
 
 
+def get_channel_by_name(ctx, channel_name):
+    channels = ctx.message.guild.channels
+    return next((channel for channel in channels if channel.name == channel_name), None)
+
+
 async def give_user_role(ctx, member, colour):
 
     standard_role = True
