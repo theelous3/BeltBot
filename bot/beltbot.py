@@ -69,15 +69,16 @@ async def request_handler(ctx, colour, *body):
 
     role_name = ChainMap(VALID_BELTS, NON_BELTS)[colour]["name"]
 
+    request_id = str(uuid4())[-12:]
+
     await ctx.send(
-        f"{ctx.message.author.mention} thanks for your {role_name} request!",
-        mention_author=True,
+        f"{ctx.message.author.mention} thanks for your {role_name} request! \nID: {request_id}",
     )
 
     body = " ".join(body) or ""
     body = body.replace("@", "")
     request = {
-        "_id": str(uuid4())[-12:],
+        "_id": request_id,
         "author": ctx.author.display_name,
         "author_id": ctx.author.id,
         "colour": colour,
