@@ -2,7 +2,6 @@ from bot.bot import BOT
 
 
 async def bazaar_on_message(message):
-
     if message.channel.name == "lock-bazaar":
         delete = False
         delete_self = False
@@ -30,4 +29,11 @@ async def bazaar_on_message(message):
                         f"\nIf you want to buy or sell, start your message with WTB or WTS. :moneybag:"
                     ),
                     delete_after=10.0,
+                )
+
+                await message.author.send(
+                    "The following message was deleted from #lock-bazaar. Only posts prefixed"
+                    " with WTB/WTS or that are a direct link, are allowed there. You can discuss buy"
+                    " and sell orders in #lock-bazaar-chat."
+                    f"\n```{message.content}```"
                 )

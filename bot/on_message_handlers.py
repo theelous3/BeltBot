@@ -12,8 +12,13 @@ _HANDLERS = [bazaar_on_message]
 
 @BOT.event
 async def on_message(message):
-    for handler in _HANDLERS:
-        await handler(message)
+    logging.info(message)
+    logging.info(message.content)
+
+    if hasattr(message.channel, "name"):
+        for handler in _HANDLERS:
+            await handler(message)
+
     await BOT.process_commands(message)
 
 
