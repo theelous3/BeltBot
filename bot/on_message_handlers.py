@@ -4,17 +4,14 @@ __all__ = ["on_message"]
 import logging
 
 from bot.bot import BOT
-from bot.bazaar import bazaar_on_message
+from bot.bazaar import bazaar_on_message_wtb_wts
 
 
-_HANDLERS = [bazaar_on_message]
+_HANDLERS = [bazaar_on_message_wtb_wts]
 
 
 @BOT.event
 async def on_message(message):
-    logging.info(message)
-    logging.info(message.content)
-
     if hasattr(message.channel, "name"):
         for handler in _HANDLERS:
             await handler(message)

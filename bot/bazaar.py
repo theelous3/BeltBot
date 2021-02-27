@@ -1,7 +1,7 @@
 from bot.bot import BOT
 
 
-async def bazaar_on_message(message):
+async def bazaar_on_message_wtb_wts(message):
     if message.channel.name == "lock-bazaar":
         delete = False
         delete_self = False
