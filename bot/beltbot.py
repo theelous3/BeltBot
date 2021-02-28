@@ -61,7 +61,7 @@ async def request_handler(ctx, colour, *body):
         await ctx.send("Only available in #belt-requests.")
         return
 
-    if colour not in chain(VALID_BELTS, NON_BELTS):
+    if colour not in ChainMap(VALID_BELTS, NON_BELTS):
         await ctx.send(
             (
                 f"{ctx.message.author.mention} I don't think {colour} is a real belt :( \n"
