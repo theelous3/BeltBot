@@ -98,5 +98,8 @@ NON_BELTS = CaseInsensitiveDict(
 ALL_BELTS = ChainMap(STANDARD_BELTS, ADDON_BELTS, NON_BELTS)
 
 BELT_ROLE_NAMES = [v["name"] for v in reversed(list(ALL_BELTS.values()))]
+STANDARD_BELT_NAMES = [v["name"] for v in reversed(list(STANDARD_BELTS.values()))]
+ADDON_BELT_NAMES = [v["name"] for v in reversed(list(ADDON_BELTS.values()))]
+NON_BELT_NAMES = [v["name"] for v in reversed(list(ALL_BELTS.values()))]
 
 HUMAN_READABLE_BELTS = ", ".join([belt for belt in reversed(list(ALL_BELTS))])

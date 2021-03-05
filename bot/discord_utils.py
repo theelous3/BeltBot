@@ -1,5 +1,6 @@
 from functools import wraps
-from bot.constants import STANDARD_BELTS, ADDON_BELTS, NON_BELTS, BELT_ROLE_NAMES
+from collections import ChainMap
+from bot.constants import STANDARD_BELTS, ADDON_BELTS, NON_BELTS, STANDARD_BELT_NAMES, ADDON_BELT_NAMES
 
 
 def get_role_by_name(ctx, role_name):
@@ -14,27 +15,28 @@ def get_channel_by_name(ctx, channel_name):
 
 async def give_user_role(ctx, member, colour):
 
-    standard_role = True
+    role_remove_categories = [STANDARD_BELT_NAMES]
     assignable = True
 
     if role := STANDARD_BELTS.get(colour):
         role_name = role["name"]
     elif role := ADDON_BELTS.get(colour):
         role_name = role["name"]
-        standard_role = False
+        role_remove_categories = [ADDON_BELT_NAMES]
     else:
         role_name = NON_BELTS[colour]["name"]
-        standard_role = False
+        role_remove_categories = []
         assignable = False
 
     role = get_role_by_name(ctx, role_name)
 
+    if role_remove_categories:
+        roles_to_remove = [role for role in member.roles if role.name in ChainMap(*role_remove_categories)]
+        roles_to_remove
+        await member.remove_roles(*roles_to_remove)
+
     if assignable:
         await member.add_roles(role)
-
-    if standard_role:
-        roles_to_remove = [role for role in member.roles if role.name in BELT_ROLE_NAMES]
-        await member.remove_roles(*roles_to_remove)
 
     return role
 
