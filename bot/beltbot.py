@@ -26,8 +26,7 @@ import logging
 import traceback
 from uuid import uuid4
 from re import compile
-from copy import deepcopy
-from itertools import chain
+from string import punctuation
 from collections import ChainMap
 from functools import wraps, partial
 from contextlib import contextmanager
@@ -52,6 +51,9 @@ from bot.db import (
 from bot.constants import VALID_BELTS, NON_BELTS, HUMAN_READABLE_BELTS
 
 
+PUNCTUATION = set(punctuation)
+
+
 _request_help = "Include your username in the format `/u/username_here` anywhere in the message body to be flaired on reddit!"
 
 
@@ -60,6 +62,8 @@ async def request_handler(ctx, colour, *body):
     if ctx.message.channel.name != "belt-requests":
         await ctx.send("Only available in #belt-requests.")
         return
+
+    colour = "".join(char for char in colour in char not in PUNCTUATION)
 
     if colour not in ChainMap(VALID_BELTS, NON_BELTS):
         await ctx.send(
@@ -296,7 +300,7 @@ async def on_command_error(ctx, error):
     elif isinstance(error, UserInputError):
         command = ctx.invoked_with
         await ctx.send(
-            f"I don't understand. Try `@LPUBeltbot {command}` to learn more :D"
+            f"I don't understand. Try `@LPUBeltbot help {command}` to learn more :D"
         )
 
 
