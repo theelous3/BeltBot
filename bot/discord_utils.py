@@ -1,5 +1,5 @@
 from functools import wraps
-from bot.constants import VALID_BELTS, NON_BELTS, BET_ROLE_NAMES
+from bot.constants import STANDARD_BELTS, ADDON_BELTS, NON_BELTS, BELT_ROLE_NAMES
 
 
 def get_role_by_name(ctx, role_name):
@@ -17,9 +17,12 @@ async def give_user_role(ctx, member, colour):
     standard_role = True
     assignable = True
 
-    try:
-        role_name = VALID_BELTS[colour]["name"]
-    except KeyError:
+    if role := STANDARD_BELTS.get(colour):
+        role_name = role["name"]
+    elif role := ADDON_BELTS.get(colour):
+        role_name = role["name"]
+        standard_role = False
+    else:
         role_name = NON_BELTS[colour]["name"]
         standard_role = False
         assignable = False
@@ -30,7 +33,7 @@ async def give_user_role(ctx, member, colour):
         await member.add_roles(role)
 
     if standard_role:
-        roles_to_remove = [role for role in member.roles if role.name in BET_ROLE_NAMES]
+        roles_to_remove = [role for role in member.roles if role.name in BELT_ROLE_NAMES]
         await member.remove_roles(*roles_to_remove)
 
     return role

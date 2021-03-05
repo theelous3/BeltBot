@@ -5,7 +5,7 @@ from asyncpraw.models.reddit.subreddit import SubredditFlair
 
 from bot.constants import (
     SUBREDDIT,
-    VALID_BELTS,
+    STANDARD_BELTS,
     MY_REDDIT_CLIENT_ID,
     MY_REDDIT_SECRET,
     MY_NAME,
@@ -28,7 +28,7 @@ REDDIT = asyncpraw.Reddit(
 
 async def set_reddit_flair(username, belt):
 
-    beltinfo = VALID_BELTS.get(belt)
+    beltinfo = STANDARD_BELTS.get(belt)
 
     if not beltinfo or not beltinfo.get("flair_text"):
         return False

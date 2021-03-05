@@ -48,7 +48,7 @@ from bot.db import (
     delete_all_requests,
 )
 
-from bot.constants import VALID_BELTS, NON_BELTS, HUMAN_READABLE_BELTS
+from bot.constants import ALL_BELTS, HUMAN_READABLE_BELTS
 
 
 PUNCTUATION = set(punctuation)
@@ -63,9 +63,9 @@ async def request_handler(ctx, colour, *body):
         await ctx.send("Only available in #belt-requests.")
         return
 
-    colour = "".join(char for char in colour in char not in PUNCTUATION)
+    colour = "".join(char for char in colour if char not in PUNCTUATION)
 
-    if colour not in ChainMap(VALID_BELTS, NON_BELTS):
+    if colour not in ALL_BELTS:
         await ctx.send(
             (
                 f"{ctx.message.author.mention} I don't think {colour} is a real belt :( \n"
@@ -75,7 +75,7 @@ async def request_handler(ctx, colour, *body):
         )
         return
 
-    role_name = ChainMap(VALID_BELTS, NON_BELTS)[colour]["name"]
+    role_name = ALL_BELTS[colour]["name"]
 
     request_id = str(uuid4())[-12:]
 
@@ -181,7 +181,7 @@ async def rejection_handler(ctx, request_id, *reason):
         await delete_request(request_id)
         return
 
-    role_name = VALID_BELTS[request["colour"]]["name"]
+    role_name = ALL_BELTS[request["colour"]]["name"]
     role = get_role_by_name(ctx, role_name)
 
     belt_requests_channel = get_channel_by_name(ctx, "belt-requests")
@@ -220,7 +220,7 @@ async def moreinfo_handler(ctx, request_id, *reason):
         await delete_request(request_id)
         return
 
-    role_name = VALID_BELTS[request["colour"]]["name"]
+    role_name = ALL_BELTS[request["colour"]]["name"]
     role = get_role_by_name(ctx, role_name)
 
     belt_requests_channel = get_channel_by_name(ctx, "belt-requests")
@@ -246,7 +246,7 @@ async def review_handler(ctx, request_id):
         return
 
     member = await guild.fetch_member(request["author_id"])
-    role_name = VALID_BELTS[request["colour"]]["name"]
+    role_name = ALL_BELTS[request["colour"]]["name"]
     role = get_role_by_name(ctx, role_name)
 
     await ctx.send(
@@ -270,7 +270,7 @@ async def unreview_handler(ctx, request_id):
         return
 
     member = await guild.fetch_member(request["author_id"])
-    role_name = VALID_BELTS[request["colour"]]["name"]
+    role_name = ALL_BELTS[request["colour"]]["name"]
     role = get_role_by_name(ctx, role_name)
 
     await ctx.send(

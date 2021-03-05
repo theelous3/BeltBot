@@ -1,5 +1,6 @@
 from os import getenv
 from dataclasses import dataclass
+from collections import ChainMap
 
 from dotenv import load_dotenv
 
@@ -23,7 +24,7 @@ TOKEN = getenv("BELTBOT_TOKEN")
 
 SUBREDDIT = "lockpicking"
 
-VALID_BELTS = CaseInsensitiveDict(
+STANDARD_BELTS = CaseInsensitiveDict(
     **{
         "white": {
             "name": "White Belt",
@@ -69,7 +70,12 @@ VALID_BELTS = CaseInsensitiveDict(
             "name": "Black Belt",
             "flair_text": "Black Belt Picker :BlackBelt:",
             "css_class": "blackbelt",
-        },
+        }
+    }
+)
+
+ADDON_BELTS = CaseInsensitiveDict(
+    **{
         "1st": {"name": "1st Dan", "flair_text": None, "css_class": None},
         "2nd": {"name": "2nd Dan", "flair_text": None, "css_class": None},
         "3rd": {"name": "3rd Dan", "flair_text": None, "css_class": None},
@@ -83,10 +89,14 @@ VALID_BELTS = CaseInsensitiveDict(
     }
 )
 
-NON_BELTS = {
-    "HoF": {"name": "Hall of Fame", "flair_text": None, "css_class": None},
-}
+NON_BELTS = CaseInsensitiveDict(
+    **{
+        "HoF": {"name": "Hall of Fame", "flair_text": None, "css_class": None},
+    }
+)
 
-BET_ROLE_NAMES = [v["name"] for v in VALID_BELTS.values()]
+ALL_BELTS = ChainMap(STANDARD_BELTS, ADDON_BELTS, NON_BELTS)
 
-HUMAN_READABLE_BELTS = ", ".join([belt for belt in VALID_BELTS])
+BELT_ROLE_NAMES = [v["name"] for v in reversed(list(ALL_BELTS.values()))]
+
+HUMAN_READABLE_BELTS = ", ".join([belt for belt in reversed(list(ALL_BELTS))])
