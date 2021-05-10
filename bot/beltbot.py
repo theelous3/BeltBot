@@ -140,12 +140,16 @@ async def approval_handler(ctx, request_id, *reason):
         return
 
     role = await give_user_role(ctx, member, request["colour"])
+    if role:
+        role_name = role.name
+    else:
+        role_name = ALL_BELTS[request["colour"]]["name"]
 
     flair_text = await reddit_flair_user(request["body"], request["colour"])
 
     message = (
         f"{member.mention}, {ctx.author.mention} has reviewed and approved your request. "
-        f"Congrats on your {role.name}!"
+        f"Congrats on your {role_name}!"
     )
     if reason:
         message += " ".join(reason_part for reason_part in reason)
@@ -189,7 +193,7 @@ async def rejection_handler(ctx, request_id, *reason):
     await belt_requests_channel.send(
         (
             f"{member.mention}, {ctx.author.mention} has reviewed and denied your request "
-            f"for {role.name}."
+            f"for {role_name}."
             f"\nNotes: {' '.join(reason_part for reason_part in reason)}"
         )
     )
