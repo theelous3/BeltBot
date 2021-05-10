@@ -1,4 +1,8 @@
 from bot.bot import BOT
+from bot.db import update_stats
+
+
+BAZAAR_PREFIXES = ["wtb", "wts", "wtt", "http://", "https://"]
 
 
 async def bazaar_on_message_wtb_wts(message):
@@ -10,8 +14,7 @@ async def bazaar_on_message_wtb_wts(message):
 
         if message.author != BOT.user:
             if not any(
-                content.startswith(bazaar_prefix)
-                for bazaar_prefix in ["wtb", "wts", "wtt", "http://", "https://"]
+                content.startswith(bazaar_prefix) for bazaar_prefix in BAZAAR_PREFIXES
             ):
                 delete = True
         else:
@@ -37,3 +40,8 @@ async def bazaar_on_message_wtb_wts(message):
                     " and sell orders in #lock-bazaar-chat."
                     f"\n```{message.content}```"
                 )
+        else:
+            type_ = next(
+                prefix for prefix in BAZAAR_PREFIXES if content.startswith(prefix)
+            )
+            await update_stats(type_)

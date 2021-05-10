@@ -26,6 +26,7 @@ import logging
 import traceback
 from uuid import uuid4
 from re import compile
+from pprint import pformat
 from string import punctuation
 from collections import ChainMap
 from functools import wraps, partial
@@ -36,7 +37,12 @@ from discord.ext.commands.errors import UserInputError, CommandNotFound
 
 from bot.bot import BOT
 from bot.utils import get_now, format_requests
-from bot.discord_utils import requires_role, get_role_by_name, give_user_role, get_channel_by_name
+from bot.discord_utils import (
+    requires_role,
+    get_role_by_name,
+    give_user_role,
+    get_channel_by_name,
+)
 from bot.reddit import reddit_flair_user
 
 from bot.db import (
@@ -46,6 +52,8 @@ from bot.db import (
     update_request,
     delete_request,
     delete_all_requests,
+    update_stats,
+    get_stats,
 )
 
 from bot.constants import ALL_BELTS, HUMAN_READABLE_BELTS
@@ -162,6 +170,8 @@ async def approval_handler(ctx, request_id, *reason):
 
     await delete_request(request_id)
 
+    await update_stats("belts_awarded")
+
 
 @BOT.command(name="reject")
 @requires_role("Mods")
@@ -186,7 +196,6 @@ async def rejection_handler(ctx, request_id, *reason):
         return
 
     role_name = ALL_BELTS[request["colour"]]["name"]
-    role = get_role_by_name(ctx, role_name)
 
     belt_requests_channel = get_channel_by_name(ctx, "belt-requests")
 
@@ -199,6 +208,8 @@ async def rejection_handler(ctx, request_id, *reason):
     )
 
     await delete_request(request_id)
+
+    await update_stats("belts_to_the_glue_factory")
 
 
 @BOT.command(name="moreinfo")
@@ -287,11 +298,16 @@ async def unreview_handler(ctx, request_id):
     await update_request(request_id, {"reviewer": ""}, remove=True)
 
 
-# @BOT.command(name="delete_all", rest_is_raw=True)
-# @requires_role("BeltBotMaintainer")
-# async def delete_all_handler(ctx):
-#     await delete_all_requests()
-#     logging.info(ctx.author.roles)
+@BOT.command(name="stats")
+async def stats_handler(ctx):
+    stats = await get_stats()
+
+    stats = {k["_id"]: k["count"] for k in stats}
+
+    await ctx.send(
+        f"Dump of stats:\n {pformat(stats)}",
+        mention_author=True,
+    )
 
 
 @BOT.event
@@ -306,6 +322,15 @@ async def on_command_error(ctx, error):
         await ctx.send(
             f"I don't understand. Try `@LPUBeltbot help {command}` to learn more :D"
         )
+
+
+# lazy debug stuff
+
+# @BOT.command(name="delete_all", rest_is_raw=True)
+# @requires_role("BeltBotMaintainer")
+# async def delete_all_handler(ctx):
+#     await delete_all_requests()
+#     logging.info(ctx.author.roles)
 
 
 @BOT.event

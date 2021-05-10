@@ -70,7 +70,7 @@ STANDARD_BELTS = CaseInsensitiveDict(
             "name": "Black Belt",
             "flair_text": "Black Belt Picker :BlackBelt:",
             "css_class": "blackbelt",
-        }
+        },
     }
 )
 

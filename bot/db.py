@@ -6,11 +6,15 @@ from motor import motor_asyncio as motor
 
 CLIENT = motor.AsyncIOMotorClient()
 
+
 beltbot_db = CLIENT.beltbot_db
 REQUESTS = beltbot_db.REQUESTS
+STATS = beltbot_db.STATS
 
+requests_collection = REQUESTS
+stats_collection = STATS
 
-COLLECTIONS = {"REQUESTS": REQUESTS}
+COLLECTIONS = {"REQUESTS": requests_collection, "STATS": stats_collection}
 
 
 # generic
@@ -43,9 +47,11 @@ async def _update(collection, field, value, replacement, remove=False):
     )
 
 
-# belt_stuff
+async def _update_increment(collection, field, increment):
+    await collection.update_one({"_id": field}, {"$inc": {"count": increment}})
 
-requests_collection = REQUESTS
+
+# belt_stuff
 
 
 async def add_request(belt_request):
@@ -70,3 +76,14 @@ async def delete_all_requests():
 
 async def get_all_requests():
     return await _find_all(requests_collection)
+
+
+# stats
+
+
+async def update_stats(key, increment=1):
+    await _update_increment(stats_collection, key, increment)
+
+
+async def get_stats():
+    return await _find_all(stats_collection)
