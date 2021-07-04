@@ -14,7 +14,7 @@ from bot.constants import (
 )
 
 
-_USERNAME_RE = compile(r"/u/[A-Za-z0-9_-]+")
+_USERNAME_RE = compile(r"u/[A-Za-z0-9_-]+")
 
 
 REDDIT = asyncpraw.Reddit(
@@ -57,5 +57,5 @@ async def reddit_flair_user(text, belt):
 def find_username(text):
     if match := _USERNAME_RE.search(text):
         found_text = match.group(0)
-        name_only = found_text[3:]
+        name_only = found_text[2:]
         return name_only

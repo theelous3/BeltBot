@@ -157,7 +157,7 @@ async def approval_handler(ctx, request_id, *reason):
 
     message = (
         f"{member.mention}, {ctx.author.mention} has reviewed and approved your request. "
-        f"Congrats on your {role_name}!"
+        f"Congrats on your {role_name}! \n"
     )
     if reason:
         message += " ".join(reason_part for reason_part in reason)
@@ -210,6 +210,31 @@ async def rejection_handler(ctx, request_id, *reason):
     await delete_request(request_id)
 
     await update_stats("belts_to_the_glue_factory")
+    
+
+@BOT.command(name="delete")
+@requires_role("Mods")
+async def delete_handler(ctx, request_id, *reason):
+    request = await get_request(request_id)
+
+    if request is None:
+        await ctx.send(f"No request by id {request_id}")
+        return
+
+    if not reason:
+        await ctx.send("You need to provide a reason!")
+        return
+
+    belt_requests_channel = get_channel_by_name(ctx, "belt-requests")
+
+    await belt_requests_channel.send(
+        (
+            f"{ctx.author.mention} has deleted the following request: {request_id}\n"
+            f"\nNotes: {' '.join(reason_part for reason_part in reason)}"
+        )
+    )
+
+    await delete_request(request_id)
 
 
 @BOT.command(name="moreinfo")
