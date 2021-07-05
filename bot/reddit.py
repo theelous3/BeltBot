@@ -14,7 +14,7 @@ from bot.constants import (
 )
 
 
-_USERNAME_RE = compile(r"u/[A-Za-z0-9_-]+")
+_USERNAME_RE = compile(r"[ | /]u/[A-Za-z0-9_-]+")
 
 
 REDDIT = asyncpraw.Reddit(
