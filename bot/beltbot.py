@@ -157,10 +157,10 @@ async def approval_handler(ctx, request_id, *reason):
 
     message = (
         f"{member.mention}, {ctx.author.mention} has reviewed and approved your request. "
-        f"Congrats on your {role_name}! \n"
+        f"Congrats on your {role_name}!"
     )
     if reason:
-        message += " ".join(reason_part for reason_part in reason)
+        message += "\nNotes: ".join(reason_part for reason_part in reason)
     if flair_text:
         message += flair_text
 
