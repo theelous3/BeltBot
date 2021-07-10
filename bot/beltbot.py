@@ -228,18 +228,14 @@ async def delete_handler(ctx, request_id, *reason):
         await ctx.send("You need to provide a reason!")
         return
 
-    delete_request_channel = get_channel_by_name(ctx, ctx.message.channel.name)
-
     await delete_request(request_id)
     
-    await delete_request_channel.send(
+    await ctx.send(
         (
             f"{ctx.author.mention} has deleted the following request: {request_id}\n"
             f"\nNotes: {' '.join(reason_part for reason_part in reason)}"
         )
     )
-
-
 
 
 @BOT.command(name="moreinfo")
