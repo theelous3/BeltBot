@@ -1,6 +1,7 @@
 import logging
 from datetime import datetime
 from functools import wraps
+from re import compile
 
 
 def suppress_exceptions(awaitable=True):
@@ -65,3 +66,29 @@ def when_mentioned(bot, msg):
         f"<@!{bot.user.id}> ",
         f"<@!{bot.user.id}>",
     ]
+
+def find_username(text):
+    _USERNAME_RE = compile(r"(reddit.com|^|[^\w/])/?u/(?P<name>\w+)")
+#1st capture group = (^|[^\w/]) - 1st Alternative ^, ^ asserts position at start of a line, (| signifies or) 2nd Alternative [^\w\/]
+#Match a single character not present in the list below [^\w\/]
+#\w matches any word character (equivalent to [a-zA-Z0-9_])
+#\/ matches the character / literally (case sensitive)
+#\/ matches the character / literally (case sensitive)
+#? matches the previous token between zero and one times, as many times as possible, giving back as needed (greedy)
+#u matches the character u literally (case sensitive)
+#\/ matches the character / literally (case sensitive)
+#Named Capture Group name (?P<name>\w+)
+#\w matches any word character (equivalent to [a-zA-Z0-9_])
+#+ matches the previous token between one and unlimited times, as many times as possible, giving back as needed (greedy)
+#examples that get matched:
+#/u/user
+# /u/user
+#text /u/user
+#
+#u/user
+# u/user
+#text u/user
+#https://reddit.com/u/theelous3
+#
+    if match := _USERNAME_RE.search(text):
+        return match.group('name')

@@ -1,4 +1,4 @@
-from re import compile
+from bot.utils import find_username
 
 import asyncpraw
 from asyncpraw.models.reddit.subreddit import SubredditFlair
@@ -13,26 +13,6 @@ from bot.constants import (
     USER_AGENT,
 )
 
-_USERNAME_RE = compile(r"(^|[^\w/])/?u/(?P<name>\w+)")
-#1st capture group = (^|[^\w/]) - 1st Alternative ^, ^ asserts position at start of a line, (| signifies or) 2nd Alternative [^\w\/]
-#Match a single character not present in the list below [^\w\/]
-#\w matches any word character (equivalent to [a-zA-Z0-9_])
-#\/ matches the character / literally (case sensitive)
-#\/ matches the character / literally (case sensitive)
-#? matches the previous token between zero and one times, as many times as possible, giving back as needed (greedy)
-#u matches the character u literally (case sensitive)
-#\/ matches the character / literally (case sensitive)
-#Named Capture Group name (?P<name>\w+)
-#\w matches any word character (equivalent to [a-zA-Z0-9_])
-#+ matches the previous token between one and unlimited times, as many times as possible, giving back as needed (greedy)
-#examples that get matched:
-#/u/user
-# /u/user
-#text /u/user
-#
-#u/user
-# u/user
-#text u/user
 
 REDDIT = asyncpraw.Reddit(
     client_id=MY_REDDIT_CLIENT_ID,
@@ -71,6 +51,3 @@ async def reddit_flair_user(text, belt):
                 return f"\nYou have also been flaired on reddit :)"
 
 
-def find_username(text):
-    if match := _USERNAME_RE.search(text):
-        return match.group('name')
