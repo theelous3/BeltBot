@@ -61,25 +61,25 @@ from bot.constants import ALL_BELTS, HUMAN_READABLE_BELTS, MY_NAME
 
 
 PUNCTUATION = set(punctuation)
+BELT_REQUEST_REGEX = "^(?P<belt>{belts})(?P<reason>.*)".format(belts="|".join(ALL_BELTS))
 
 
 _request_help = "Include your username in the format `/u/username_here` anywhere in the message body to be flaired on reddit!"
 
 
 @BOT.command(name="request", help=_request_help)
-async def request_handler(ctx, *, body):
+async def request_handler(ctx, *, request):
     if ctx.message.channel.name != "belt-requests":
         await ctx.send("Only available in #belt-requests.")
         return
 
-    belt_regex = "^(?P<belt>{belts})(?P<reason>.*)".format(belts="|".join(ALL_BELTS))
-    match = re.match(belt_regex, body)
+    match = re.match(BELT_REQUEST_REGEX, request)
     if not match:
       await ctx.send(
                 f"{ctx.message.author.mention} I couldn't understand your message, the syntax is:\n"
                 f"@{MY_NAME} request belt_color_goes_here any_evidence_goes_here.\n"
                 f"The available belt colors are {HUMAN_READABLE_BELTS}.\n"
-                 "If you mention a Reddit username anywhere in the message body, that user will be flaired on reddit.",
+                 "If you mention a Reddit username anywhere in the request, that user will be flaired on reddit.",
              mention_author=True)
       return
 
