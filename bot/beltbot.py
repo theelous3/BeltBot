@@ -23,6 +23,7 @@ __all__ = [
 
 import json
 import logging
+import re
 import traceback
 from uuid import uuid4
 from re import compile
@@ -56,7 +57,7 @@ from bot.db import (
     get_stats,
 )
 
-from bot.constants import ALL_BELTS, HUMAN_READABLE_BELTS
+from bot.constants import ALL_BELTS, HUMAN_READABLE_BELTS, MY_NAME
 
 
 PUNCTUATION = set(punctuation)
@@ -66,38 +67,36 @@ _request_help = "Include your username in the format `/u/username_here` anywhere
 
 
 @BOT.command(name="request", help=_request_help)
-async def request_handler(ctx, colour, *body):
+async def request_handler(ctx, *, body):
     if ctx.message.channel.name != "belt-requests":
         await ctx.send("Only available in #belt-requests.")
         return
 
-    colour = "".join(char for char in colour if char not in PUNCTUATION)
+    belt_regex = "^(?P<belt>{belts})(?P<reason>.*)".format(belts="|".join(ALL_BELTS))
+    match = re.match(belt_regex, body)
+    if not match:
+      await ctx.send(
+                f"{ctx.message.author.mention} I couldn't understand your message, the syntax is:\n"
+                f"@{MY_NAME} request belt_color_goes_here any_evidence_goes_here.\n"
+                f"The available belt colors are {HUMAN_READABLE_BELTS}.\n"
+                 "If you mention a Reddit username anywhere in the message body, that user will be flaired on reddit.",
+             mention_author=True)
+      return
 
-    if colour not in ALL_BELTS:
-        await ctx.send(
-            (
-                f"{ctx.message.author.mention} I don't think {colour} is a real belt :( \n"
-                f"Try one of these: {HUMAN_READABLE_BELTS}"
-            ),
-            mention_author=True,
-        )
-        return
-
-    role_name = ALL_BELTS[colour]["name"]
-
+    belt = match.group("belt")
+    role_name = ALL_BELTS[belt]["name"]
     request_id = str(uuid4())[-12:]
 
     await ctx.send(
         f"{ctx.message.author.mention} thanks for your {role_name} request! \nID: {request_id}",
     )
 
-    body = " ".join(body) or ""
-    body = body.replace("@", "")
+    body = match.group("reason").replace("@", "")
     request = {
         "_id": request_id,
         "author": ctx.author.display_name,
         "author_id": ctx.author.id,
-        "colour": colour,
+        "colour": belt,
         "created_at": get_now(),
         "body": body,
         "jump_url": ctx.message.jump_url,
