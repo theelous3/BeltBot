@@ -61,7 +61,7 @@ from bot.constants import ALL_BELTS, HUMAN_READABLE_BELTS, MY_NAME
 
 
 PUNCTUATION = set(punctuation)
-BELT_REQUEST_REGEX = "^(?P<belt>{belts})(?P<reason>.*)".format(belts="|".join(map(re.escape, ALL_BELTS)))
+BELT_REQUEST_REGEX = re.compile("^(?P<belt>{belts})(?P<reason>.*)".format(belts="|".join(map(re.escape, ALL_BELTS))), re.DOTALL)
 
 
 _request_help = "Include your username in the format `/u/username_here` anywhere in the message body to be flaired on reddit!"
