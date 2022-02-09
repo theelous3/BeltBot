@@ -61,7 +61,7 @@ from bot.constants import ALL_BELTS, HUMAN_READABLE_BELTS, MY_NAME
 
 
 PUNCTUATION = set(punctuation)
-BELT_REQUEST_REGEX = re.compile("^(?P<belt>{belts})(?P<reason>.*)".format(belts="|".join(map(re.escape, ALL_BELTS))), re.DOTALL)
+BELT_REQUEST_REGEX = re.compile("^(?P<belt>{belts})(?P<reason>.*)".format(belts="|".join(map(re.escape, ALL_BELTS))), re.DOTALL | re.IGNORECASE)
 
 
 _request_help = "Include your username in the format `/u/username_here` anywhere in the message body to be flaired on reddit!"
@@ -74,7 +74,7 @@ async def request_handler(ctx, *, request):
         return
 
     match = re.match(BELT_REQUEST_REGEX, request)
-    if not match or not match.group("reason"):
+    if not match:
       await ctx.send(
                 f"{ctx.message.author.mention} I couldn't understand your message, the syntax is:\n"
                 f"@{MY_NAME} request belt_color_goes_here any_evidence_goes_here.\n"
@@ -122,10 +122,9 @@ async def list_handler(ctx, sort="oldest"):
         await ctx.send("There are no belt requests waiting for approval :D")
         return
 
-    await ctx.send(
-        f"Active requests:\n\n{format_requests(requests)}",
-        mention_author=True,
-    )
+    await ctx.send(f"Active requests:", mention_author=True)
+    for formatted_request in format_requests(requests):
+        await ctx.send(formatted_request, mention_author=True)
 
 
 @BOT.command(name="approve")
