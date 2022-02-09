@@ -52,7 +52,7 @@ def format_requests(requests):
                 else ""
             )
         )
-    return "\n\n==========\n\n".join(formatted_requests)
+    return formatted_requests
 
 
 def when_mentioned(bot, msg):

@@ -122,10 +122,9 @@ async def list_handler(ctx, sort="oldest"):
         await ctx.send("There are no belt requests waiting for approval :D")
         return
 
-    await ctx.send(
-        f"Active requests:\n\n{format_requests(requests)}",
-        mention_author=True,
-    )
+    await ctx.send(f"Active requests:", mention_author=True)
+    for formatted_request in format_requests(requests):
+        await ctx.send(formatted_request, mention_author=True)
 
 
 @BOT.command(name="approve")
