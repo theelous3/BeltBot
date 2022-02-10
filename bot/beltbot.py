@@ -104,6 +104,23 @@ async def request_handler(ctx, *, request):
 
     await add_request(request)
 
+@BOT.command(name="sync")
+async def sync_handler(ctx, username):
+    
+    #Check if user in good channel
+    if ctx.message.channel.name != "belt-requests":
+        await ctx.send("Only available in #belt-requests.")
+        return
+
+    # Look for the belt in user roles
+    for user_roles in ctx.author.roles:
+        if user_roles in ALL_BELTS:
+            role = user_roles
+
+    # Flair the user
+    flair_text = await reddit_flair_user(username, user_roles)
+
+    await belt_requests_channel.send(flair_text)
 
 @BOT.command(name="list")
 async def list_handler(ctx, sort="oldest"):
