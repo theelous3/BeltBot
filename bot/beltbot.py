@@ -106,20 +106,27 @@ async def request_handler(ctx, *, request):
 
 @BOT.command(name="sync")
 @requires_role("Mods")
-async def sync_handler(ctx, username):
+async def sync_handler(ctx, sync):
     
     #Check if user in good channel
     if ctx.message.channel.name != "belt-requests":
         await ctx.send("Only available in #belt-requests.")
         return
 
-    # Look for the belt in user roles
-    for user_roles in ctx.author.roles:
-        if user_roles in ALL_BELTS:
-            role = user_roles
+    # Look for the belt in sync request
+    match = re.match(BELT_REQUEST_REGEX, sync)
+    if not match:
+        await ctx.send(
+                f"{ctx.message.author.mention} I couldn't understand your message, the syntax is:\n"
+                f"@{MY_NAME} sync belt_color_goes_here reddit_username_goes_here.\n"
+                f"The available belt colors are {HUMAN_READABLE_BELTS}.\n",
+            mention_author=True)
+        return
+    belt = match.group("belt")
+    role_name = ALL_BELTS[belt]["name"]
 
     # Flair the user
-    flair_text = await reddit_flair_user(username, user_roles)
+    flair_text = await reddit_flair_user(sync, user_roles)
 
     await belt_requests_channel.send(flair_text)
 
