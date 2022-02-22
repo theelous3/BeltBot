@@ -105,6 +105,7 @@ async def request_handler(ctx, *, request):
     await add_request(request)
 
 @BOT.command(name="sync")
+@requires_role("Mods")
 async def sync_handler(ctx, username):
     
     #Check if user in good channel
