@@ -93,9 +93,9 @@ ADDON_BELTS = CaseInsensitiveDict(
        "15th": {"name": "15th Dan", "flair_text": "Black Belt 15th Dan :BlackBelt:", "css_class": "15thDan"},
        "16th": {"name": "16th Dan", "flair_text": "Black Belt 16th Dan :BlackBelt:", "css_class": "16thDan"},
        "17th": {"name": "17th Dan", "flair_text": "Black Belt 17th Dan :BlackBelt:", "css_class": "17thDan"},
-       "10th": {"name": "18th Dan", "flair_text": "Black Belt 18th Dan :BlackBelt:", "css_class": "18thDan"},
-       "10th": {"name": "19th Dan", "flair_text": "Black Belt 19th Dan :BlackBelt:", "css_class": "19thDan"},
-       "10th": {"name": "20th Dan", "flair_text": "Black Belt 20th Dan :BlackBelt:", "css_class": "20thDan"},
+       "18th": {"name": "18th Dan", "flair_text": "Black Belt 18th Dan :BlackBelt:", "css_class": "18thDan"},
+       "19th": {"name": "19th Dan", "flair_text": "Black Belt 19th Dan :BlackBelt:", "css_class": "19thDan"},
+       "20th": {"name": "20th Dan", "flair_text": "Black Belt 20th Dan :BlackBelt:", "css_class": "20thDan"},
     }
 )
 
