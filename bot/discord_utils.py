@@ -42,7 +42,7 @@ async def give_user_role(ctx, member, colour):
             for role in member.roles
             if role.name in ChainMap(*role_remove_categories)
         ]
-        roles_to_remove
+
         await member.remove_roles(*roles_to_remove)
 
     if assignable:

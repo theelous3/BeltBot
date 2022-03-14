@@ -1,3 +1,5 @@
+import logging
+
 from bot.utils import find_username
 
 import asyncpraw
@@ -5,13 +7,16 @@ from asyncpraw.models.reddit.subreddit import SubredditFlair
 
 from bot.constants import (
     SUBREDDIT,
-    STANDARD_BELTS,
+    ALL_BELTS,
     MY_REDDIT_CLIENT_ID,
     MY_REDDIT_SECRET,
     MY_NAME,
     MY_REDDIT_PW,
     USER_AGENT,
 )
+
+
+logger = logging.getLogger(__name__)
 
 
 REDDIT = asyncpraw.Reddit(
@@ -25,13 +30,15 @@ REDDIT = asyncpraw.Reddit(
 
 async def set_reddit_flair(username, belt):
 
-    beltinfo = STANDARD_BELTS.get(belt)
+    beltinfo = ALL_BELTS.get(belt)
 
     if not beltinfo or not beltinfo.get("flair_text"):
         return False
 
     subreddit = await REDDIT.subreddit(SUBREDDIT)
     subreddit_flair = SubredditFlair(subreddit)
+
+    logger.info(f"flairing {username} -> {beltinfo['flair_text']}, {beltinfo['css_class']}")
 
     await subreddit_flair.set(
         username, text=beltinfo["flair_text"], css_class=beltinfo["css_class"]

@@ -107,7 +107,7 @@ async def request_handler(ctx, *, request):
 @BOT.command(name="sync")
 @requires_role("Mods")
 async def sync_handler(ctx, sync):
-    
+
     #Check if user in good channel
     if ctx.message.channel.name != "belt-requests":
         await ctx.send("Only available in #belt-requests.")
@@ -176,6 +176,8 @@ async def approval_handler(ctx, request_id, *reason):
     else:
         role_name = ALL_BELTS[request["colour"]]["name"]
 
+    logging.info(f"Processing request {request_id} for {member.mention}'s {role}")
+
     flair_text = await reddit_flair_user(request["body"], request["colour"])
 
     message = (
@@ -234,6 +236,7 @@ async def rejection_handler(ctx, request_id, *reason):
 
     await update_stats("belts_to_the_glue_factory")
 
+
 @BOT.command(name="delete")
 @requires_role("Mods")
 async def delete_handler(ctx, request_id, *reason):
@@ -252,7 +255,7 @@ async def delete_handler(ctx, request_id, *reason):
         return
 
     await delete_request(request_id)
-    
+
     await ctx.send(
         (
             f"{ctx.author.mention} has deleted the following request: {request_id}\n"
