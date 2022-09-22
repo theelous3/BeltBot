@@ -153,7 +153,7 @@ async def list_handler(ctx, sort="oldest"):
 
 
 @BOT.command(name="approve")
-@requires_role("Mods")
+@requires_role("Staff")
 async def approval_handler(ctx, request_id, *reason):
     request = await get_request(request_id)
 
@@ -199,7 +199,7 @@ async def approval_handler(ctx, request_id, *reason):
 
 
 @BOT.command(name="reject")
-@requires_role("Mods")
+@requires_role("Staff")
 async def rejection_handler(ctx, request_id, *reason):
     request = await get_request(request_id)
 
@@ -238,7 +238,7 @@ async def rejection_handler(ctx, request_id, *reason):
 
 
 @BOT.command(name="delete")
-@requires_role("Mods")
+@requires_role("Staff")
 async def delete_handler(ctx, request_id, *reason):
     if ctx.message.channel.name not in ("belt-requests", "bot-spam"):
         await ctx.send("Only available in #belt-requests or #bot-spam.")
@@ -265,7 +265,7 @@ async def delete_handler(ctx, request_id, *reason):
 
 
 @BOT.command(name="moreinfo")
-@requires_role("Mods")
+@requires_role("Staff")
 async def moreinfo_handler(ctx, request_id, *reason):
     guild = ctx.message.guild
     request = await get_request(request_id)
@@ -303,7 +303,7 @@ async def moreinfo_handler(ctx, request_id, *reason):
 
 
 @BOT.command(name="review")
-@requires_role("Mods")
+@requires_role("Staff")
 async def review_handler(ctx, request_id):
     guild = ctx.message.guild
     request = await get_request(request_id)
@@ -327,7 +327,7 @@ async def review_handler(ctx, request_id):
 
 
 @BOT.command(name="unreview")
-@requires_role("Mods")
+@requires_role("Staff")
 async def unreview_handler(ctx, request_id):
     guild = ctx.message.guild
     request = await get_request(request_id)
