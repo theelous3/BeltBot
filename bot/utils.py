@@ -37,20 +37,12 @@ def parse_datetime(datetime_):
 def format_requests(requests):
     formatted_requests = []
     for request in requests:
-        if len(request["body"]) > 1300:
-            body = (
-                "This request is too long to display!"
-                " Please use the Jump URL to navigate to the original message."
-            )
-        else:
-            body = request['body']
         formatted_requests.append(
             (
                 f"Created: {request['created_at']}"
                 f"\nID: {request['_id']}"
                 f"\nUser: `@{request['author']}`"
                 f"\nBelt: {request['colour']}"
-                f"\nMessage: {body}"
                 f"\nJump URL: {request['jump_url']}"
             )
             + (
