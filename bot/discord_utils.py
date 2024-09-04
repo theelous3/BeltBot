@@ -1,11 +1,12 @@
 from functools import wraps
-from collections import ChainMap
+from itertools import chain
 from bot.constants import (
     STANDARD_BELTS,
     ADDON_BELTS,
     NON_BELTS,
     STANDARD_BELT_NAMES,
     ADDON_BELT_NAMES,
+    NEWBIE_ROLES,
 )
 
 
@@ -21,7 +22,7 @@ def get_channel_by_name(ctx, channel_name):
 
 async def give_user_role(ctx, member, colour):
 
-    role_remove_categories = [STANDARD_BELT_NAMES]
+    role_remove_categories = [STANDARD_BELT_NAMES, NEWBIE_ROLES]
     assignable = True
 
     if role := STANDARD_BELTS.get(colour):
@@ -40,7 +41,7 @@ async def give_user_role(ctx, member, colour):
         roles_to_remove = [
             role
             for role in member.roles
-            if role.name in ChainMap(*role_remove_categories)
+            if role.name in chain(*role_remove_categories)
         ]
 
         await member.remove_roles(*roles_to_remove)

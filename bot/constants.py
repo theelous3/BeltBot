@@ -24,6 +24,8 @@ TOKEN = getenv("BELTBOT_TOKEN")
 
 SUBREDDIT = "lockpicking"
 
+NEWBIE_ROLES = ["Chatter"]
+
 STANDARD_BELTS = CaseInsensitiveDict(
     **{
         "white": {
