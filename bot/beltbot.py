@@ -131,6 +131,7 @@ async def sync_handler(ctx, sync):
     await belt_requests_channel.send(flair_text)
 
 @BOT.command(name="list")
+@requires_role("Staff")
 async def list_handler(ctx, sort="oldest"):
     if sort not in ["oldest", "newest"]:
         await ctx.send(
