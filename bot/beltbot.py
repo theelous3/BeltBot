@@ -26,7 +26,6 @@ import logging
 import re
 import traceback
 from uuid import uuid4
-from re import compile
 from pprint import pformat
 from string import punctuation
 from collections import ChainMap
@@ -104,31 +103,28 @@ async def request_handler(ctx, *, request):
 
     await add_request(request)
 
+
 @BOT.command(name="sync")
 @requires_role("Staff")
-async def sync_handler(ctx, sync):
+async def sync_handler(ctx, username, *, belt_to_sync):
 
     #Check if user in good channel
     if ctx.message.channel.name != "belt-requests":
         await ctx.send("Only available in #belt-requests.")
         return
 
-    # Look for the belt in sync request
-    match = re.match(BELT_REQUEST_REGEX, sync)
-    if not match:
-        await ctx.send(
-                f"{ctx.message.author.mention} I couldn't understand your message, the syntax is:\n"
-                f"@{MY_NAME} sync belt_color_goes_here reddit_username_goes_here.\n"
-                f"The available belt colors are {HUMAN_READABLE_BELTS}.\n",
-            mention_author=True)
+    match = re.match(BELT_REQUEST_REGEX, belt_to_sync)
+
+    if match:
+        belt = match.group("belt")
+
+        flair_text = await reddit_flair_user(username, belt)
+
+        await ctx.send(flair_text)
         return
-    belt = match.group("belt")
-    role_name = ALL_BELTS[belt]["name"]
 
-    # Flair the user
-    flair_text = await reddit_flair_user(sync, user_roles)
+    await ctx.send("Couldn't sync belts! Double check the request :(")
 
-    await belt_requests_channel.send(flair_text)
 
 @BOT.command(name="list")
 async def list_handler(ctx, sort="oldest"):
@@ -378,11 +374,11 @@ async def on_command_error(ctx, error):
 
 # lazy debug stuff
 
-# @BOT.command(name="delete_all", rest_is_raw=True)
-# @requires_role("BeltBotMaintainer")
-# async def delete_all_handler(ctx):
-#     await delete_all_requests()
-#     logging.info(ctx.author.roles)
+@BOT.command(name="delete_all", rest_is_raw=True)
+@requires_role("BeltBotMaintainer")
+async def delete_all_handler(ctx):
+    await delete_all_requests()
+    logging.info(ctx.author.roles)
 
 
 @BOT.event
