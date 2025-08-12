@@ -2,7 +2,7 @@ import logging
 
 from bot.utils import find_username
 
-import asyncpraw
+from asyncpraw import Reddit
 from asyncpraw.models.reddit.subreddit import SubredditFlair
 
 from bot.constants import (
@@ -19,7 +19,7 @@ from bot.constants import (
 logger = logging.getLogger(__name__)
 
 
-REDDIT = asyncpraw.Reddit(
+REDDIT = Reddit(
     client_id=MY_REDDIT_CLIENT_ID,
     client_secret=MY_REDDIT_SECRET,
     user_agent=USER_AGENT,

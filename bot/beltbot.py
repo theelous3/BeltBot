@@ -154,7 +154,7 @@ async def list_handler(ctx, sort="oldest"):
 
 @BOT.command(name="approve")
 @requires_role("Staff")
-async def approval_handler(ctx, request_id, *reason):
+async def approval_handler(ctx, request_id, *, reason):
     request = await get_request(request_id)
 
     if request is None:
@@ -185,7 +185,7 @@ async def approval_handler(ctx, request_id, *reason):
         f"Congrats on your {role_name}!\n"
     )
     if reason:
-        message += "\nNotes: " + " ".join(reason_part for reason_part in reason)
+        message += "\nNotes: " + "".join(reason_part for reason_part in reason)
     if flair_text:
         message += flair_text
 
@@ -200,7 +200,7 @@ async def approval_handler(ctx, request_id, *reason):
 
 @BOT.command(name="reject")
 @requires_role("Staff")
-async def rejection_handler(ctx, request_id, *reason):
+async def rejection_handler(ctx, request_id, *, reason):
     request = await get_request(request_id)
 
     if request is None:
@@ -228,7 +228,7 @@ async def rejection_handler(ctx, request_id, *reason):
         (
             f"{member.mention}, {ctx.author.mention} has reviewed and denied your request "
             f"for {role_name}."
-            f"\nNotes: {' '.join(reason_part for reason_part in reason)}"
+            f"\nNotes: {''.join(reason_part for reason_part in reason)}"
         )
     )
 
@@ -239,7 +239,7 @@ async def rejection_handler(ctx, request_id, *reason):
 
 @BOT.command(name="delete")
 @requires_role("Staff")
-async def delete_handler(ctx, request_id, *reason):
+async def delete_handler(ctx, request_id, *, reason):
     if ctx.message.channel.name not in ("belt-requests", "bot-spam"):
         await ctx.send("Only available in #belt-requests or #bot-spam.")
         return
@@ -259,14 +259,14 @@ async def delete_handler(ctx, request_id, *reason):
     await ctx.send(
         (
             f"{ctx.author.mention} has deleted the following request: {request_id}\n"
-            f"\nNotes: {' '.join(reason_part for reason_part in reason)}"
+            f"\nNotes: {''.join(reason_part for reason_part in reason)}"
         )
     )
 
 
 @BOT.command(name="moreinfo")
 @requires_role("Staff")
-async def moreinfo_handler(ctx, request_id, *reason):
+async def moreinfo_handler(ctx, request_id, *, reason):
     guild = ctx.message.guild
     request = await get_request(request_id)
 
@@ -297,7 +297,7 @@ async def moreinfo_handler(ctx, request_id, *reason):
             f"{member.mention}, {ctx.author.mention} has reviewed your request for"
             f" {role.name} but needs more information. Please update your"
             f" request here: {request['jump_url']}"
-            f"\nNotes: {' '.join(reason_part for reason_part in reason)}"
+            f"\nNotes: {''.join(reason_part for reason_part in reason)}"
         )
     )
 
