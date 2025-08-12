@@ -1,10 +1,9 @@
 import asyncio
 from functools import wraps
 
-from motor import motor_asyncio as motor
+from pymongo import AsyncMongoClient
 
-
-CLIENT = motor.AsyncIOMotorClient()
+CLIENT = AsyncMongoClient()
 
 
 beltbot_db = CLIENT.beltbot_db
