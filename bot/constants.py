@@ -56,7 +56,7 @@ STANDARD_BELTS = CaseInsensitiveDict(
             "name": "Blue Belt",
             "flair_text": "Blue Belt Picker :BlueBelt:",
             "css_class": "bluebelt",
-            "reddit_id": "c9da5d00-f539-11e6-8c0d-0e5335022d94",
+            "reddit_id": "c663ef6a-f539-11e6-a2f0-0e01b56c5d32",
         },
         "purple": {
             "name": "Purple Belt",
