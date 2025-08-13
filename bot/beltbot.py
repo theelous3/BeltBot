@@ -26,7 +26,6 @@ import logging
 import re
 import traceback
 from uuid import uuid4
-from re import compile
 from pprint import pformat
 from string import punctuation
 from collections import ChainMap
@@ -39,6 +38,7 @@ from discord.ext.commands.errors import UserInputError, CommandNotFound
 from bot.bot import BOT
 from bot.utils import get_now, format_requests
 from bot.discord_utils import (
+    check_authz,
     requires_role,
     get_role_by_name,
     give_user_role,
@@ -104,34 +104,38 @@ async def request_handler(ctx, *, request):
 
     await add_request(request)
 
+
 @BOT.command(name="sync")
 @requires_role("Staff")
-async def sync_handler(ctx, sync):
+async def sync_handler(ctx, username, *, belt_to_sync):
 
     #Check if user in good channel
     if ctx.message.channel.name != "belt-requests":
         await ctx.send("Only available in #belt-requests.")
         return
 
-    # Look for the belt in sync request
-    match = re.match(BELT_REQUEST_REGEX, sync)
-    if not match:
-        await ctx.send(
-                f"{ctx.message.author.mention} I couldn't understand your message, the syntax is:\n"
-                f"@{MY_NAME} sync belt_color_goes_here reddit_username_goes_here.\n"
-                f"The available belt colors are {HUMAN_READABLE_BELTS}.\n",
-            mention_author=True)
+    match = re.match(BELT_REQUEST_REGEX, belt_to_sync)
+
+    if match:
+        belt = match.group("belt")
+
+        flair_text = await reddit_flair_user(username, belt)
+
+        await ctx.send(flair_text)
         return
-    belt = match.group("belt")
-    role_name = ALL_BELTS[belt]["name"]
 
-    # Flair the user
-    flair_text = await reddit_flair_user(sync, user_roles)
+    await ctx.send("Couldn't sync belts! Double check the request :(")
 
-    await belt_requests_channel.send(flair_text)
 
 @BOT.command(name="list")
 async def list_handler(ctx, sort="oldest"):
+
+    #Check it's not a non-staff member in belt-requests
+    if ctx.message.channel.name == "belt-requests":
+        if not check_authz(ctx, "Staff"):
+            await ctx.send(f"{ctx.author.mention} keep this channel clean, use #bot-spam plz :)")
+            return
+
     if sort not in ["oldest", "newest"]:
         await ctx.send(
             (
@@ -154,7 +158,7 @@ async def list_handler(ctx, sort="oldest"):
 
 @BOT.command(name="approve")
 @requires_role("Staff")
-async def approval_handler(ctx, request_id, *reason):
+async def approval_handler(ctx, request_id, *, reason):
     request = await get_request(request_id)
 
     if request is None:
@@ -185,7 +189,7 @@ async def approval_handler(ctx, request_id, *reason):
         f"Congrats on your {role_name}!\n"
     )
     if reason:
-        message += "\nNotes: " + " ".join(reason_part for reason_part in reason)
+        message += "\nNotes: " + "".join(reason_part for reason_part in reason)
     if flair_text:
         message += flair_text
 
@@ -200,7 +204,7 @@ async def approval_handler(ctx, request_id, *reason):
 
 @BOT.command(name="reject")
 @requires_role("Staff")
-async def rejection_handler(ctx, request_id, *reason):
+async def rejection_handler(ctx, request_id, *, reason):
     request = await get_request(request_id)
 
     if request is None:
@@ -228,7 +232,7 @@ async def rejection_handler(ctx, request_id, *reason):
         (
             f"{member.mention}, {ctx.author.mention} has reviewed and denied your request "
             f"for {role_name}."
-            f"\nNotes: {' '.join(reason_part for reason_part in reason)}"
+            f"\nNotes: {''.join(reason_part for reason_part in reason)}"
         )
     )
 
@@ -239,7 +243,7 @@ async def rejection_handler(ctx, request_id, *reason):
 
 @BOT.command(name="delete")
 @requires_role("Staff")
-async def delete_handler(ctx, request_id, *reason):
+async def delete_handler(ctx, request_id, *, reason):
     if ctx.message.channel.name not in ("belt-requests", "bot-spam"):
         await ctx.send("Only available in #belt-requests or #bot-spam.")
         return
@@ -259,14 +263,14 @@ async def delete_handler(ctx, request_id, *reason):
     await ctx.send(
         (
             f"{ctx.author.mention} has deleted the following request: {request_id}\n"
-            f"\nNotes: {' '.join(reason_part for reason_part in reason)}"
+            f"\nNotes: {''.join(reason_part for reason_part in reason)}"
         )
     )
 
 
 @BOT.command(name="moreinfo")
 @requires_role("Staff")
-async def moreinfo_handler(ctx, request_id, *reason):
+async def moreinfo_handler(ctx, request_id, *, reason):
     guild = ctx.message.guild
     request = await get_request(request_id)
 
@@ -297,7 +301,7 @@ async def moreinfo_handler(ctx, request_id, *reason):
             f"{member.mention}, {ctx.author.mention} has reviewed your request for"
             f" {role.name} but needs more information. Please update your"
             f" request here: {request['jump_url']}"
-            f"\nNotes: {' '.join(reason_part for reason_part in reason)}"
+            f"\nNotes: {''.join(reason_part for reason_part in reason)}"
         )
     )
 
@@ -378,11 +382,11 @@ async def on_command_error(ctx, error):
 
 # lazy debug stuff
 
-# @BOT.command(name="delete_all", rest_is_raw=True)
-# @requires_role("BeltBotMaintainer")
-# async def delete_all_handler(ctx):
-#     await delete_all_requests()
-#     logging.info(ctx.author.roles)
+@BOT.command(name="delete_all", rest_is_raw=True)
+@requires_role("BeltBotMaintainer")
+async def delete_all_handler(ctx):
+    await delete_all_requests()
+    logging.info(ctx.author.roles)
 
 
 @BOT.event
