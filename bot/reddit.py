@@ -63,4 +63,6 @@ async def reddit_flair_user(username, belt):
             if maybe_flaired:
                 return f"\nYou have been flaired on reddit :)"
 
-    return f"\nI was unable to flair {username}"
+    if username:
+        return f"\nI was unable to flair {username}"
+
