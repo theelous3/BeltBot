@@ -41,10 +41,13 @@ async def set_reddit_flair(username, belt):
     subreddit = await REDDIT.subreddit(SUBREDDIT)
     subreddit_flair = SubredditFlair(subreddit)
 
-    logger.info(f"flairing {username} -> {belt['flair_text']}, {belt['css_class']}, {belt['reddit_id']}")
+    logger.info(
+        f"flairing {username} -> {belt['flair_text']}, {belt['css_class']}, {belt['reddit_id']}"
+    )
 
     await subreddit_flair.set(
-        username, flair_template_id=belt["reddit_id"],
+        username,
+        flair_template_id=belt["reddit_id"],
     )
 
     return True
@@ -59,5 +62,5 @@ async def reddit_flair_user(username, belt):
         else:
             if maybe_flaired:
                 return f"\nYou have been flaired on reddit :)"
-    
+
     return f"\nI was unable to flair {username}"

@@ -6,4 +6,6 @@ from bot.utils import when_mentioned
 
 INTENTS = discord.Intents.default()
 INTENTS.members = True
-BOT = commands.Bot(command_prefix=when_mentioned, case_insensitive=True, intents=INTENTS)
+BOT = commands.Bot(
+    command_prefix=when_mentioned, case_insensitive=True, intents=INTENTS
+)

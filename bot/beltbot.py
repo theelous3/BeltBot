@@ -61,7 +61,12 @@ from bot.constants import ALL_BELTS, HUMAN_READABLE_BELTS, MY_NAME
 
 
 PUNCTUATION = set(punctuation)
-BELT_REQUEST_REGEX = re.compile("^(?P<belt>{belts})(?P<reason>.*)".format(belts="|".join(map(re.escape, ALL_BELTS))), re.DOTALL | re.IGNORECASE)
+BELT_REQUEST_REGEX = re.compile(
+    "^(?P<belt>{belts})(?P<reason>.*)".format(
+        belts="|".join(map(re.escape, ALL_BELTS))
+    ),
+    re.DOTALL | re.IGNORECASE,
+)
 
 
 _request_help = "Include your username in the format `/u/username_here` anywhere in the message body to be flaired on reddit!"
@@ -75,13 +80,14 @@ async def request_handler(ctx, *, request):
 
     match = re.match(BELT_REQUEST_REGEX, request)
     if not match:
-      await ctx.send(
-                f"{ctx.message.author.mention} I couldn't understand your message, the syntax is:\n"
-                f"@{MY_NAME} request belt_color_goes_here any_evidence_goes_here.\n"
-                f"The available belt colors are {HUMAN_READABLE_BELTS}.\n"
-                 "If you mention a Reddit username anywhere in the request, that user will be flaired on reddit.",
-             mention_author=True)
-      return
+        await ctx.send(
+            f"{ctx.message.author.mention} I couldn't understand your message, the syntax is:\n"
+            f"@{MY_NAME} request belt_color_goes_here any_evidence_goes_here.\n"
+            f"The available belt colors are {HUMAN_READABLE_BELTS}.\n"
+            "If you mention a Reddit username anywhere in the request, that user will be flaired on reddit.",
+            mention_author=True,
+        )
+        return
 
     belt = match.group("belt")
     role_name = ALL_BELTS[belt]["name"]
@@ -109,7 +115,7 @@ async def request_handler(ctx, *, request):
 @requires_role("Staff")
 async def sync_handler(ctx, username, *, belt_to_sync):
 
-    #Check if user in good channel
+    # Check if user in good channel
     if ctx.message.channel.name != "belt-requests":
         await ctx.send("Only available in #belt-requests.")
         return
@@ -130,10 +136,12 @@ async def sync_handler(ctx, username, *, belt_to_sync):
 @BOT.command(name="list")
 async def list_handler(ctx, sort="oldest"):
 
-    #Check it's not a non-staff member in belt-requests
+    # Check it's not a non-staff member in belt-requests
     if ctx.message.channel.name == "belt-requests":
         if not check_authz(ctx, "Staff"):
-            await ctx.send(f"{ctx.author.mention} keep this channel clean, use #bot-spam plz :)")
+            await ctx.send(
+                f"{ctx.author.mention} keep this channel clean, use #bot-spam plz :)"
+            )
             return
 
     if sort not in ["oldest", "newest"]:
@@ -381,6 +389,7 @@ async def on_command_error(ctx, error):
 
 
 # lazy debug stuff
+
 
 @BOT.command(name="delete_all", rest_is_raw=True)
 @requires_role("BeltBotMaintainer")

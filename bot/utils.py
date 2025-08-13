@@ -93,4 +93,4 @@ def find_username(text):
     _USERNAME_RE = compile(r"(reddit.com|^|[^\w/])/?(u|U)/(?P<name>[\w-]+)")
 
     if match := _USERNAME_RE.search(text):
-        return match.group('name')
+        return match.group("name")

@@ -39,9 +39,7 @@ async def give_user_role(ctx, member, colour):
 
     if role_remove_categories:
         roles_to_remove = [
-            role
-            for role in member.roles
-            if role.name in chain(*role_remove_categories)
+            role for role in member.roles if role.name in chain(*role_remove_categories)
         ]
 
         await member.remove_roles(*roles_to_remove)
