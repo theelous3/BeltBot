@@ -38,6 +38,7 @@ from discord.ext.commands.errors import UserInputError, CommandNotFound
 from bot.bot import BOT
 from bot.utils import get_now, format_requests
 from bot.discord_utils import (
+    check_authz,
     requires_role,
     get_role_by_name,
     give_user_role,
@@ -128,6 +129,13 @@ async def sync_handler(ctx, username, *, belt_to_sync):
 
 @BOT.command(name="list")
 async def list_handler(ctx, sort="oldest"):
+
+    #Check it's not a non-staff member in belt-requests
+    if ctx.message.channel.name == "belt-requests":
+        if not check_authz(ctx, "Staff"):
+            await ctx.send(f"{ctx.author.mention} keep this channel clean, use #bot-spam plz :)")
+            return
+
     if sort not in ["oldest", "newest"]:
         await ctx.send(
             (
