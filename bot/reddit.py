@@ -53,16 +53,16 @@ async def set_reddit_flair(username, belt):
     return True
 
 
-async def reddit_flair_user(username, belt):
+async def reddit_flair_user(ctx, username, belt):
     if username := find_username(username):
         try:
             maybe_flaired = await set_reddit_flair(username, belt)
         except Exception as e:
-            raise e
+            logger.error("Error setting reddit flair: %s", e, exc_info=True)
         else:
             if maybe_flaired:
-                return f"\nYou have been flaired on reddit :)"
+                return f"\n{username} you have been flaired on reddit by {ctx.author.mention} :)"
 
     if username:
-        return f"\nI was unable to flair {username}"
+        return f"\n{ctx.author.mention} I was unable to flair {username} :O"
 

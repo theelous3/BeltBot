@@ -113,19 +113,14 @@ async def request_handler(ctx, *, request):
 
 @BOT.command(name="sync")
 @requires_role("Staff")
-async def sync_handler(ctx, username, *, belt_to_sync):
-
-    # Check if user in good channel
-    if ctx.message.channel.name != "belt-requests":
-        await ctx.send("Only available in #belt-requests.")
-        return
+async def sync_handler(ctx, belt_to_sync, *, username ):
 
     match = re.match(BELT_REQUEST_REGEX, belt_to_sync)
 
     if match:
         belt = match.group("belt")
 
-        flair_text = await reddit_flair_user(username, belt)
+        flair_text = await reddit_flair_user(ctx, username, belt)
 
         await ctx.send(flair_text)
         return
@@ -190,7 +185,7 @@ async def approval_handler(ctx, request_id, *, reason):
 
     logging.info(f"Processing request {request_id} for {member.mention}'s {role}")
 
-    flair_text = await reddit_flair_user(request["body"], request["colour"])
+    flair_text = await reddit_flair_user(ctx, request["body"], request["colour"])
 
     message = (
         f"{member.mention}, {ctx.author.mention} has reviewed and approved your request. "
