@@ -39,7 +39,7 @@ from bot.bot import BOT
 from bot.utils import get_now, format_requests
 from bot.discord_utils import (
     check_authz,
-    requires_role,
+    requires_roles,
     get_role_by_name,
     give_user_role,
     get_channel_by_name,
@@ -112,7 +112,7 @@ async def request_handler(ctx, *, request):
 
 
 @BOT.command(name="sync")
-@requires_role("Staff")
+@requires_roles(["Staff", "Belt Reviewer"])
 async def sync_handler(ctx, belt_to_sync, *, username ):
 
     match = re.match(BELT_REQUEST_REGEX, belt_to_sync)
@@ -160,7 +160,7 @@ async def list_handler(ctx, sort="oldest"):
 
 
 @BOT.command(name="approve")
-@requires_role("Staff")
+@requires_roles(["Staff", "Belt Reviewer"])
 async def approval_handler(ctx, request_id, *, reason):
     request = await get_request(request_id)
 
@@ -206,7 +206,7 @@ async def approval_handler(ctx, request_id, *, reason):
 
 
 @BOT.command(name="reject")
-@requires_role("Staff")
+@requires_roles(["Staff", "Belt Reviewer"])
 async def rejection_handler(ctx, request_id, *, reason):
     request = await get_request(request_id)
 
@@ -245,7 +245,7 @@ async def rejection_handler(ctx, request_id, *, reason):
 
 
 @BOT.command(name="delete")
-@requires_role("Staff")
+@requires_roles(["Staff", "Belt Reviewer"])
 async def delete_handler(ctx, request_id, *, reason):
     if ctx.message.channel.name not in ("belt-requests", "bot-spam"):
         await ctx.send("Only available in #belt-requests or #bot-spam.")
@@ -272,7 +272,7 @@ async def delete_handler(ctx, request_id, *, reason):
 
 
 @BOT.command(name="moreinfo")
-@requires_role("Staff")
+@requires_roles(["Staff", "Belt Reviewer"])
 async def moreinfo_handler(ctx, request_id, *, reason):
     guild = ctx.message.guild
     request = await get_request(request_id)
@@ -310,7 +310,7 @@ async def moreinfo_handler(ctx, request_id, *, reason):
 
 
 @BOT.command(name="review")
-@requires_role("Staff")
+@requires_roles(["Staff", "Belt Reviewer"])
 async def review_handler(ctx, request_id):
     guild = ctx.message.guild
     request = await get_request(request_id)
@@ -334,7 +334,7 @@ async def review_handler(ctx, request_id):
 
 
 @BOT.command(name="unreview")
-@requires_role("Staff")
+@requires_roles(["Staff", "Belt Reviewer"])
 async def unreview_handler(ctx, request_id):
     guild = ctx.message.guild
     request = await get_request(request_id)
@@ -387,7 +387,7 @@ async def on_command_error(ctx, error):
 
 
 @BOT.command(name="delete_all", rest_is_raw=True)
-@requires_role("BeltBotMaintainer")
+@requires_roles(["BeltBotMaintainer"])
 async def delete_all_handler(ctx):
     await delete_all_requests()
     logging.info(ctx.author.roles)

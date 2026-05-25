@@ -50,21 +50,26 @@ async def give_user_role(ctx, member, colour):
     return role
 
 
-def check_authz(ctx, role_name):
-    matching_role = get_role_by_name(ctx, role_name)
+def check_authz(ctx, roles):
+    found_roles = []
+    for role in roles:
+        matching_role = get_role_by_name(ctx, role)
+        if matching_role:
+            found_roles.append(role)
+
     approver_roles = ctx.author.roles
 
-    if matching_role in approver_roles:
+    if any(role in approver_roles for role in found_roles):
         return True
 
     return False
 
 
-def requires_role(role_name):
+def requires_roles(roles: list[str]):
     def bleep_bloop(coro):
         @wraps(coro)
         async def inner(ctx, *args, **kwargs):
-            if check_authz(ctx, role_name):
+            if check_authz(ctx, roles):
                 return await coro(ctx, *args, **kwargs)
             else:
                 await ctx.send(
