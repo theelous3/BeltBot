@@ -1,5 +1,8 @@
 from functools import wraps
 from itertools import chain
+
+import logging
+
 from bot.constants import (
     STANDARD_BELTS,
     ADDON_BELTS,
@@ -51,13 +54,19 @@ async def give_user_role(ctx, member, colour):
 
 
 def check_authz(ctx, roles):
+
+    logging.info(f"Processing auth for roles {roles}")
+
     found_roles = []
     for role in roles:
         matching_role = get_role_by_name(ctx, role)
         if matching_role:
-            found_roles.append(role)
+            logging.info(f"Found role: {matching_role}")
+            found_roles.append(matching_role)
 
     approver_roles = ctx.author.roles
+
+    logging.info(f"Comparing roles {found_roles} against {approver_roles}")
 
     if any(role in found_roles for role in approver_roles):
         return True
