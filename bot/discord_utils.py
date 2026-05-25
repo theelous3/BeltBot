@@ -59,7 +59,7 @@ def check_authz(ctx, roles):
 
     approver_roles = ctx.author.roles
 
-    if any(role in approver_roles for role in found_roles):
+    if any(role in found_roles for role in approver_roles):
         return True
 
     return False
